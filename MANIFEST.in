@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include staff_loans *.css
+recursive-include staff_loans *.csv
+recursive-include staff_loans *.html
+recursive-include staff_loans *.ico
+recursive-include staff_loans *.js
+recursive-include staff_loans *.json
+recursive-include staff_loans *.md
+recursive-include staff_loans *.png
+recursive-include staff_loans *.py
+recursive-include staff_loans *.svg
+recursive-include staff_loans *.txt
+recursive-exclude staff_loans *.pyc
