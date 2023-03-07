@@ -1,5 +1,4 @@
 {
- "_comments": "[{\"comment\": \"Action Failed<br><br>Staff Loan: Fieldname amended_from appears multiple times in rows 57, 58\", \"by\": \"Administrator\", \"name\": \"63abea92e2\"}]",
  "actions": [],
  "allow_import": 1,
  "autoname": "ACC-LOANS-.YYYY.-.#####",
@@ -343,7 +342,7 @@
   },
   {
    "allow_on_submit": 1,
-   "depends_on": "eval:doc.docstatus && doc.docstatus === 1",
+   "depends_on": "eval:doc.docstatus && doc.docstatus === 1 && doc.status === \"Disbursed\"",
    "fieldname": "dont_deduct_this_month",
    "fieldtype": "Button",
    "label": "Don't Deduct"
@@ -354,7 +353,7 @@
   },
   {
    "allow_on_submit": 1,
-   "depends_on": "eval:doc.docstatus && doc.docstatus === 1",
+   "depends_on": "eval:doc.docstatus && doc.docstatus === 1 && doc.status === \"Disbursed\"",
    "fieldname": "deduct_amount",
    "fieldtype": "Button",
    "label": "Change Deduction Amount"
@@ -365,7 +364,7 @@
   },
   {
    "allow_on_submit": 1,
-   "depends_on": "eval:doc.docstatus && doc.docstatus === 1",
+   "depends_on": "eval:doc.docstatus && doc.docstatus === 1 && doc.status === \"Disbursed\"",
    "fieldname": "change_monthly_repayment_amount",
    "fieldtype": "Button",
    "label": "Monthly Deduction Amount"
@@ -376,7 +375,7 @@
   },
   {
    "allow_on_submit": 1,
-   "depends_on": "eval:doc.docstatus && doc.docstatus === 1",
+   "depends_on": "eval:doc.docstatus && doc.docstatus === 1 && doc.status === \"Disbursed\"",
    "fieldname": "deduction_till",
    "fieldtype": "Button",
    "label": "Deduction Till"
@@ -534,7 +533,7 @@
    "link_fieldname": "loan"
   }
  ],
- "modified": "2023-03-06 18:54:34.001000",
+ "modified": "2023-03-07 10:44:12.006011",
  "modified_by": "Administrator",
  "module": "Staff Loan Management",
  "name": "Staff Loan",

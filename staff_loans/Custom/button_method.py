@@ -31,7 +31,7 @@ def create_loans(source_name, target_doc=None, submit=0):
 		source_name,
 		{
 			"Loan Application": {
-				"doctype": "Custom Loan",
+				"doctype": "Staff Loan",
 				"validation": {"docstatus": ["=", 1]},
 				"postprocess": update_accounts,
 			}
