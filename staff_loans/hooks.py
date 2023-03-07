@@ -29,6 +29,7 @@ app_license = "MIT"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
+doctype_js = {"Loan Application" : "public/js/button.js"}
 # doctype_js = {"doctype" : "public/js/doctype.js"}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -102,13 +103,20 @@ app_license = "MIT"
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-#	"*": {
-#		"on_update": "method",
-#		"on_cancel": "method",
-#		"on_trash": "method"
-#	}
-# }
+doc_events = {
+	"Journal Entry": {
+		"on_submit": "staff_loans.Custom.loan.on_submit",
+	},
+    "Payroll Entry": {
+		"before_submit": "staff_loans.Custom.loan.add_additional_salary"
+	},
+    "Additional Salary": {
+		"before_cancel": "staff_loans.Custom.loan.do_cancell",
+	},
+    "Salary Slip": {
+		"on_submit": "staff_loans.Custom.loan.on_salary_slip_submit",
+	},
+}
 
 # Scheduled Tasks
 # ---------------
