@@ -8,22 +8,29 @@ from dateutil.relativedelta import relativedelta
 
 @frappe.whitelist()
 def on_salary_slip_submit(doc, method):
-    salary_slip = frappe.get_doc("Salary Slip", doc.name)
-    for i in salary_slip.deductions:
-        if i.salary_component == "Staff Loan":
-            # frappe.msgprint("Salary Slip document found {0}". format(i.amount))
-            staff_loans = frappe.get_all("Staff Loan", filters={
-                "applicant": salary_slip.employee, 
-                "status": "Disbursed"
-                },fields={"name"})
-            for loans in staff_loans:
-                staff_loan = frappe.get_doc("Staff Loan", loans.name)
-                for repayment in staff_loan.repayment_schedule:
-                    if repayment.payment_reference == i.additional_salary:
-                        repayment.is_paid = 1
-                        repayment.save()
+    for deduction in doc.deductions:
+        if deduction.salary_component == "Staff Loan":
+            staff_loans = get_staff_loans(doc.employee)
+            for staff_loan in staff_loans:
+                update_staff_loan_repayment_schedule(staff_loan.name, deduction.additional_salary)
 
-                staff_loan.save()
+
+def get_staff_loans(employee):
+    staff_loans = frappe.get_all("Staff Loan", filters={
+        "applicant": employee, 
+        "status": "Disbursed"
+    }, fields=["name"])
+    return [frappe.get_doc("Staff Loan", loan.name) for loan in staff_loans]
+
+
+def update_staff_loan_repayment_schedule(staff_loan_name, payment_reference):
+    staff_loan = frappe.get_doc("Staff Loan", staff_loan_name)
+    for repayment in staff_loan.repayment_schedule:
+        if repayment.payment_reference == payment_reference:
+            repayment.is_paid = 1
+            repayment.save()
+            staff_loan.total_amount_paid += repayment.total_payment
+    staff_loan.save()
 
 @frappe.whitelist()
 def make_loan_disbursement_journal_entry(loan, company,applicant,debit_account,applicant_type,credit_account, ref_date, pending_amount, as_dict=0):
