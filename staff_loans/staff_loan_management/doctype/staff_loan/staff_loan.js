@@ -323,32 +323,6 @@ frappe.ui.form.on("Staff Loan", {
 		}
 
 		if (frm.doc.docstatus == 1) {
-			frm.add_custom_button(__('Export to XML'), function() {
-				
-				frappe.call({
-					method: 'staff_loans.staff_loan_management.doctype.staff_loan.staff_loan.create_xml',
-					args: {
-						data: frm.doc.name
-					},
-					callback: function(response) {
-						console.log(response.message);
-					}
-				});
-
-			});
-			frm.add_custom_button(__('Export to XML to DB'), function() {
-				
-				frappe.call({
-					method: 'staff_loans.staff_loan_management.doctype.staff_loan.staff_loan.send_xml_to_server',
-					args: {
-						data: frm.doc.name
-					},
-					callback: function(response) {
-						console.log(response.message);
-					}
-				});
-
-			});
 
 			if (["Sanctioned", "Partially Disbursed"].includes(frm.doc.status)) {
 				frm.add_custom_button(__('Loan Disbursement Journal Entry'), function() {
