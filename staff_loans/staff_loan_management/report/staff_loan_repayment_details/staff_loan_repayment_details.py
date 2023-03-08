@@ -10,9 +10,9 @@ def execute(filters=None):
 	columns = get_columns()
 	data = get_data(filters)
 	# chart_data = get_chart_data(data)
-	return columns, data, None,None #chart_data
+	return columns, data, None
 
-def get_columns(filters):
+def get_columns():
 	return [
 		{"fieldname": "applicant", "fieldtype": "Data", "label": _("Applicant"), "width": "150px"},
 		{"fieldname": "applicant_name", "fieldtype": "Data", "label": _("Applicant Name"), "width": "150px"},
@@ -28,26 +28,35 @@ def get_columns(filters):
 @frappe.whitelist()
 def get_data(filters):
 	loans = frappe.db.sql(f"""
-			SELECT
+		SELECT
 			l.applicant AS applicant, 
 			l.applicant_name AS applicant_name,
 			l.name AS loan,
 			l.loan_amount AS total_payable_amount,
 			l.written_off_amount AS write_off_amount,
-			0 AS amount_paid_from_salary,
-			(SELECT SUM(ls.total_payment) FROM `tabStaff Loan` l
-			INNER JOIN `tabStaff Loan Repayment Schedule` ls ON l.name = ls.parent AND ls.parentfield = 'repayment_schedule'
-			LEFT JOIN `tabStaff Loan Repayment` lr ON ls.repayment_reference = lr.name
-			WHERE l.name = '{filters.employee}'
-			AND l.docstatus = 1
-			AND lr.repayment_type = 'External Sources') AS amount_paid_not_from_salary,
-			null AS loan_balance
+			(
+				SELECT SUM(lrs.total_payment) FROM `tabStaff Loan` ln
+					INNER JOIN `tabStaff Loan Repayment Schedule` lrs ON ln.name = lrs.parent AND lrs.parentfield = 'repayment_schedule'
+				WHERE ln.applicant = '{filters.employee}'
+				AND ln.name = l.name
+				AND lrs.outsource = 0
+				AND lrs.repayment_reference IS NULL
+				AND lrs.is_paid = 1
+				AND ln.docstatus = 1
+				GROUP BY ln.name ORDER BY ln.name) AS amount_paid_from_salary,
+			(
+				SELECT SUM(lls.total_payment) FROM `tabStaff Loan` ll
+					INNER JOIN `tabStaff Loan Repayment Schedule` lls ON ll.name = lls.parent AND lls.parentfield = 'repayment_schedule'
+					LEFT JOIN `tabStaff Loan Repayment` llr ON lls.repayment_reference = llr.name
+				WHERE ll.applicant = '{filters.employee}'
+				AND ll.name = l.name
+				AND ll.docstatus = 1
+				AND llr.repayment_type = 'External Sources' GROUP BY ll.name ORDER BY ll.name ASC) AS amount_paid_not_from_salary,
+			SUM(l.loan_amount - l.total_amount_paid) AS loan_balance
 		FROM `tabStaff Loan` l 
-		INNER JOIN `tabStaff Loan Repayment Schedule` ls ON l.name = ls.parent AND ls.parentfield = 'repayment_schedule'
-		WHERE l.name = '{filters.emloyee}'
+		WHERE l.applicant = '{filters.employee}'
 		AND l.docstatus = 1
-		AND ls.repayment_reference = ''
-		AND ls.outsource = 0
 		AND l.status = "Disbursed"
+		GROUP BY l.name ORDER BY loan ASC
 		""", as_dict=1)
 	return loans
