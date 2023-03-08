@@ -331,6 +331,7 @@ def update_additional_salary(amount,loan,payment_date,loan_amount,input_amount,i
                 "repayment_reference": source
 
             })
+            staff_loan.total_amount_paid += flt(input_amount)
         if ref_name:
             ammendment_ref = ""
             doc = frappe.get_doc("Additional Salary", ref_name)
