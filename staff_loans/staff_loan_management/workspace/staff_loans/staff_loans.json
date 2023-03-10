@@ -1,0 +1,54 @@
+{
+ "charts": [],
+ "content": "[{\"type\":\"card\",\"data\":{\"card_name\":\"Staff Loans\",\"col\":4}}]",
+ "creation": "2023-03-07 10:10:30.194059",
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "month-view",
+ "idx": 0,
+ "label": "Staff Loans",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Staff Loans",
+   "link_count": 2,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Loan",
+   "link_count": 0,
+   "link_to": "Staff Loan",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Loan Repayment",
+   "link_count": 0,
+   "link_to": "Staff Loan Repayment",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2023-03-10 18:22:50.874842",
+ "modified_by": "Administrator",
+ "module": "Staff Loan Management",
+ "name": "Staff Loans",
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 33.0,
+ "shortcuts": [],
+ "title": "Staff Loans"
+}
