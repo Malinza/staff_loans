@@ -8,8 +8,13 @@ frappe.query_reports["Staff Loan Repayment Details"] = {
 			"fieldname": "employee",
 			"fieldtype": "Link",
 			"label": __("Employee"),
-			"options": "Employee",
-			"reqd": 1
+			"options": "Employee"
+		},
+		{
+			"fieldname": "company",
+			"fieldtype": "Link",
+			"label": __("Company"),
+			"options": "Company"
 		}
 	]
 };
