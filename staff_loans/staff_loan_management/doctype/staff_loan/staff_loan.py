@@ -14,6 +14,7 @@ from frappe.utils import (
 	date_diff,
 	flt,
 	get_last_day,
+	get_first_day,
 	getdate,
 	now_datetime,
 	nowdate,
@@ -157,7 +158,7 @@ class StaffLoan(AccountsController):
 		)
 
 		self.repayment_schedule = []
-		payment_date = self.repayment_start_date
+		payment_date = get_first_day(self.repayment_start_date)
 		balance_amount = self.loan_amount
 
 		while balance_amount > 0:
