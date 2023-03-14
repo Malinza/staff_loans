@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"type\":\"card\",\"data\":{\"card_name\":\"Staff Loans\",\"col\":4}}]",
+ "content": "[{\"id\":\"b46vufFEwe\",\"type\":\"card\",\"data\":{\"card_name\":\"Staff Loans\",\"col\":4}},{\"id\":\"hjPGhaUCM4\",\"type\":\"card\",\"data\":{\"card_name\":\"Report\",\"col\":4}}]",
  "creation": "2023-03-07 10:10:30.194059",
  "docstatus": 0,
  "doctype": "Workspace",
@@ -8,6 +8,7 @@
  "hide_custom": 0,
  "icon": "month-view",
  "idx": 0,
+ "is_hidden": 0,
  "label": "Staff Loans",
  "links": [
   {
@@ -37,12 +38,51 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Report",
+   "link_count": 3,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Staff Loan Outstanding",
+   "link_count": 0,
+   "link_to": "Staff Loan Outstanding",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Staff Loan Repayment Details",
+   "link_count": 0,
+   "link_to": "Staff Loan Repayment Details",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Staff Loan Repayment and Closure",
+   "link_count": 0,
+   "link_to": "Staff Loan Repayment and Closure",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2023-03-10 18:22:50.874842",
+ "modified": "2023-03-14 15:48:39.834096",
  "modified_by": "Administrator",
  "module": "Staff Loan Management",
  "name": "Staff Loans",
+ "number_cards": [],
  "owner": "Administrator",
  "parent_page": "",
  "public": 1,
