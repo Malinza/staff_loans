@@ -88,18 +88,18 @@ def add_additional_salary(doc, method):
         if frappe.db.exists("Staff Loan", {"applicant": i.employee, "status": "Disbursed"}):
                 # If it does, get the document
             # frappe.msgprint("Staff Loan document found {0}". format(i.employee))
-            staff_loan = frappe.get_list("Staff Loan", filters={
+            staff_loan_list = frappe.get_list("Staff Loan", filters={
                 "applicant": i.employee, 
                 "status": "Disbursed"
                 },fields={"name"})
-            for loans in staff_loan:
+            for loans in staff_loan_list:
                 # Get Repayment Schedule Amount
                 new_checkk = datetime.strptime(doc.start_date, "%Y-%m-%d").date()
                 # frappe.msgprint("Date is {0}". format(new_checkk))
                 new_check = new_checkk.replace(day=1)
                 repayment_amount = 0
-                staff_loann = frappe.get_doc("Staff Loan", loans)
-                for d in staff_loann.repayment_schedule:
+                staff_loan = frappe.get_doc("Staff Loan", loans)
+                for d in staff_loan.repayment_schedule:
                     # frappe.msgprint("Payment Date {0}". format(d.payment_date))
                     if d.payment_date == new_check and d.total_payment > 0 and d.is_paid == 0:
                         repayment_amount = d.total_payment
