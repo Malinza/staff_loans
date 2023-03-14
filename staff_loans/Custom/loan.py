@@ -79,47 +79,10 @@ def on_submit(doc, method):
 @frappe.whitelist()
 def add_additional_salary(doc, method):
     default_company = frappe.defaults.get_global_default("company")
-    default_companyy = frappe.get_doc("Company", default_company)
-    default_company_abbr = default_companyy.abbr
 
-        # Check if the "Loans and Advances (Assets)" parent account exists
-    if not frappe.db.exists("Account", "Loans and Advances (Assets) - " + default_company_abbr):
-            # If it doesn't exist, create it with default values
-        loans_and_advances = frappe.new_doc("Account")
-        loans_and_advances.update({
-            "account_name": "Loans and Advances (Assets) - " + default_company_abbr,
-            "parent_account": "Current Assets - " + default_company_abbr,
-            "root_type": "Asset",
-            "company": default_company,
-            "is_group": 1
-        })
-        loans_and_advances.insert()
-        loans_and_advances = frappe.get_doc("Account", "Loans and Advances (Assets) - " + default_company_abbr)
-    else:
-        loans_and_advances = frappe.get_doc("Account", "Loans and Advances (Assets) - " + default_company_abbr)
-
-        # Check if the "Staff Loan" account already exists
-    if not frappe.db.exists("Account", "Staff Loan - " + default_company_abbr):
-            # If it doesn't exist, create it with default values and "Loans and Advances (Assets)" as the parent
-        staff_loan_account = frappe.new_doc("Account")
-        staff_loan_account.update({
-            "account_name": "Staff Loan",
-            "parent_account": loans_and_advances.name,
-            "root_type": loans_and_advances.root_type,
-            "account_type": "Asset",
-            "company": default_company
-        })
-        staff_loan_account.insert()
-        # Check if the "Staff Loan" Salary Component already exists
+    # Check if the "Staff Loan" Salary Component exists
     if not frappe.db.exists("Salary Component", "Staff Loan"):
-            # Create a new "Staff Loan" Salary Component with the desired values
-        staff_loan_component = frappe.new_doc("Salary Component")
-        staff_loan_component.salary_component = "Staff Loan"
-        staff_loan_component.salary_component_type = "Deduction"
-        staff_loan_component.payroll_frequency = "Monthly"
-        staff_loan_component.amount_based_on_formula = 0
-        staff_loan_component.insert()
-        staff_loan_component = frappe.get_doc("Salary Component", "Staff Loan")
+        frappe.throw("Staff Loan Salary Component does not exist")
     else:
         staff_loan_component = frappe.get_doc("Salary Component", "Staff Loan")
         # Check if the document is being submitted
