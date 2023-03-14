@@ -82,8 +82,6 @@ def add_additional_salary(doc, method):
     # Check if the "Staff Loan" Salary Component exists
     if not frappe.db.exists("Salary Component", "Staff Loan"):
         frappe.throw("Staff Loan Salary Component does not exist")
-    else:
-        staff_loan_component = frappe.get_doc("Salary Component", "Staff Loan")
         # Check if the document is being submitted
     for i in doc.employees:
             # Check if the "Staff Loan" document already exists
@@ -112,7 +110,7 @@ def add_additional_salary(doc, method):
                             new_additional_salary.employee = i.employee
                             new_additional_salary.employee_name = i.employee_name
                             new_additional_salary.company = doc.company
-                            new_additional_salary.salary_component = staff_loan_component.name
+                            new_additional_salary.salary_component = "Staff Loan"
                             new_additional_salary.amount = repayment_amount
                             new_additional_salary.payroll_date = doc.start_date
                             new_additional_salary.insert()
