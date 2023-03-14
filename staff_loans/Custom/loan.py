@@ -78,7 +78,6 @@ def on_submit(doc, method):
 
 @frappe.whitelist()
 def add_additional_salary(doc, method):
-    default_company = frappe.defaults.get_global_default("company")
 
     # Check if the "Staff Loan" Salary Component exists
     if not frappe.db.exists("Salary Component", "Staff Loan"):
@@ -112,7 +111,7 @@ def add_additional_salary(doc, method):
                             new_additional_salary = frappe.new_doc("Additional Salary")
                             new_additional_salary.employee = i.employee
                             new_additional_salary.employee_name = i.employee_name
-                            new_additional_salary.company = default_company
+                            new_additional_salary.company = doc.company
                             new_additional_salary.salary_component = staff_loan_component.name
                             new_additional_salary.amount = repayment_amount
                             new_additional_salary.payroll_date = doc.start_date
