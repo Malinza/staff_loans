@@ -368,8 +368,8 @@ frappe.ui.form.on("Staff Loan", {
 				"loan_application": frm.doc.loan_application,
 				"applicant_name": frm.doc.applicant_name,
 				"pending_amount": frm.doc.loan_amount - frm.doc.disbursed_amount,
-				"debit_account": frm.doc.disbursement_account,
-				"credit_account": frm.doc.loan_account,
+				"debit_account": frm.doc.loan_account,
+				"credit_account": frm.doc.disbursement_account,
 				"as_dict": 1
 			},
 			method: "staff_loans.Custom.loan.make_loan_disbursement_journal_entry",
