@@ -44,11 +44,11 @@
   "penalty_income_account",
   "section_break_15",
   "change_months_paid",
-  "dont_deduct_this_month",
-  "column_break_37",
   "deduct_amount",
-  "column_break_39",
+  "column_break_37",
   "change_monthly_repayment_amount",
+  "column_break_39",
+  "dont_deduct_this_month",
   "column_break_41",
   "deduction_till",
   "section_break_43",
@@ -378,7 +378,7 @@
    "depends_on": "eval:doc.docstatus && doc.docstatus === 1 && doc.status === \"Disbursed\"",
    "fieldname": "deduction_till",
    "fieldtype": "Button",
-   "label": "Deduction Till"
+   "label": "Postpone Deduction Till"
   },
   {
    "fieldname": "section_break_43",
@@ -533,7 +533,7 @@
    "link_fieldname": "loan"
   }
  ],
- "modified": "2023-03-07 10:44:12.006011",
+ "modified": "2023-03-15 11:49:27.275824",
  "modified_by": "Administrator",
  "module": "Staff Loan Management",
  "name": "Staff Loan",

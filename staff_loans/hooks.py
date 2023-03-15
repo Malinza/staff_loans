@@ -115,6 +115,7 @@ doc_events = {
 	},
     "Salary Slip": {
 		"on_submit": "staff_loans.Custom.loan.on_salary_slip_submit",
+        "before_save": "staff_loans.Custom.loan.add_additional_salary_on_salary_slip",
 	},
 }
 

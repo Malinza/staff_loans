@@ -117,6 +117,46 @@ def add_additional_salary(doc, method):
                             new_additional_salary.submit()
                             d.payment_reference = new_additional_salary.name
                             d.save()
+
+@frappe.whitelist()
+def add_additional_salary_on_salary_slip(doc, method):
+
+    # Check if the "Staff Loan" Salary Component exists
+    if not frappe.db.exists("Salary Component", "Staff Loan"):
+        frappe.throw("Staff Loan Salary Component does not exist")
+        
+    # Check if the "Staff Loan" document already exists
+    if frappe.db.exists("Staff Loan", {"applicant": doc.employee, "status": "Disbursed"}):
+        staff_loan_list = frappe.get_list("Staff Loan", filters={
+            "applicant": doc.employee, 
+            "status": "Disbursed"
+            },fields={"name"})
+        for loans in staff_loan_list:
+            # Get Repayment Schedule Amount
+            new_checkk = datetime.strptime(doc.start_date, "%Y-%m-%d").date()
+            # frappe.msgprint("Date is {0}". format(new_checkk))
+            new_check = new_checkk.replace(day=1)
+            repayment_amount = 0
+            staff_loan = frappe.get_doc("Staff Loan", loans)
+            for d in staff_loan.repayment_schedule:
+                # frappe.msgprint("Payment Date {0}". format(d.payment_date))
+                if d.payment_date == new_check and d.total_payment > 0 and d.is_paid == 0:
+                    repayment_amount = d.total_payment
+                    # if not frappe.db.exists("Additional Salary", {"employee": doc.employee, "salary_component": staff_loan_component.name, "payroll_date": new_check, "docstatus": 1, "amount": repayment_amount}): 
+                    if not d.payment_reference:
+                        # If it doesn't exist, create a new Additional Salary
+                        new_additional_salary = frappe.new_doc("Additional Salary")
+                        new_additional_salary.employee = doc.employee
+                        new_additional_salary.employee_name = doc.employee_name
+                        new_additional_salary.company = doc.company
+                        new_additional_salary.salary_component = "Staff Loan"
+                        new_additional_salary.amount = repayment_amount
+                        new_additional_salary.payroll_date = doc.start_date
+                        new_additional_salary.insert()
+                        new_additional_salary.submit()
+                        d.payment_reference = new_additional_salary.name
+                        d.save()
+
 @frappe.whitelist()
 def do_cancel(doc, method):
     # doc.ignore_linked_doctypes = ("Staff Loan")
