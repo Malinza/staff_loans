@@ -1,6 +1,9 @@
 import frappe
 from frappe.model.mapper import get_mapped_doc
 from frappe.utils import nowdate
+from frappe.utils import (
+    get_first_day,
+)
 from datetime import datetime
 from frappe.utils import flt
 from datetime import datetime,timedelta
@@ -133,14 +136,14 @@ def add_additional_salary_on_salary_slip(doc, method):
             },fields={"name"})
         for loans in staff_loan_list:
             # Get Repayment Schedule Amount
-            new_checkk = datetime.strptime(doc.start_date, "%Y-%m-%d").date()
+            document_date = get_first_day(doc.start_date)
             # frappe.msgprint("Date is {0}". format(new_checkk))
-            new_check = new_checkk.replace(day=1)
+            # new_check = new_checkk.replace(day=1)
             repayment_amount = 0
             staff_loan = frappe.get_doc("Staff Loan", loans)
             for d in staff_loan.repayment_schedule:
                 # frappe.msgprint("Payment Date {0}". format(d.payment_date))
-                if d.payment_date == new_check and d.total_payment > 0 and d.is_paid == 0:
+                if d.payment_date == document_date and d.total_payment > 0 and d.is_paid == 0:
                     repayment_amount = d.total_payment
                     # if not frappe.db.exists("Additional Salary", {"employee": doc.employee, "salary_component": staff_loan_component.name, "payroll_date": new_check, "docstatus": 1, "amount": repayment_amount}): 
                     if not d.payment_reference:
