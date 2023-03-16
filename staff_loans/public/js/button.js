@@ -5,7 +5,7 @@ frappe.ui.form.on('Loan Application', {
 	add_toolbar_buttons: function(frm) {
 		if (frm.doc.status == "Approved" && frm.doc.docstatus == 1) {
 			frappe.db.get_value("Staff Loan", {"loan_application": frm.doc.name, "docstatus": 1}, "name", (r) => {
-					frm.add_custom_button(__('Staff Loans'), function() {
+					frm.add_custom_button(__('Staff Loan'), function() {
 						frm.trigger('create_loans');
 					},__('Create'))
 			});
