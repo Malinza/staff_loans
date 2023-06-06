@@ -2,6 +2,7 @@
  "charts": [],
  "content": "[{\"id\":\"b46vufFEwe\",\"type\":\"card\",\"data\":{\"card_name\":\"Staff Loans\",\"col\":4}},{\"id\":\"hjPGhaUCM4\",\"type\":\"card\",\"data\":{\"card_name\":\"Report\",\"col\":4}}]",
  "creation": "2023-03-07 10:10:30.194059",
+ "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
  "for_user": "",
@@ -11,34 +12,6 @@
  "is_hidden": 0,
  "label": "Staff Loans",
  "links": [
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Staff Loans",
-   "link_count": 2,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Loan",
-   "link_count": 0,
-   "link_to": "Staff Loan",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Loan Repayment",
-   "link_count": 0,
-   "link_to": "Staff Loan Repayment",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
   {
    "hidden": 0,
    "is_query_report": 0,
@@ -76,9 +49,47 @@
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Staff Loans",
+   "link_count": 3,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Loan",
+   "link_count": 0,
+   "link_to": "Staff Loan",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Loan Repayment",
+   "link_count": 0,
+   "link_to": "Staff Loan Repayment",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Loan Settings",
+   "link_count": 0,
+   "link_to": "Staff Loan Settings",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2023-03-14 15:48:39.834096",
+ "modified": "2023-06-06 17:09:45.183062",
  "modified_by": "Administrator",
  "module": "Staff Loan Management",
  "name": "Staff Loans",
