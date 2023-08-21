@@ -231,7 +231,7 @@ def do_cancell(doc, method):
                 "status": "Disbursed"
             }, fields=["name"])
             for staff_loan in staff_loans:
-                repayment_schedules = frappe.get_list("Staff Loan Repayment Schedule", filters={
+                repayment_schedules = frappe.db.get_list("Staff Loan Repayment Schedule", filters={
                     "parent": staff_loan.name,
                     "payment_reference": doc.name
                 }, fields=["name"])
