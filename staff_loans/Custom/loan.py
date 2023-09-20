@@ -231,15 +231,18 @@ def do_cancell(doc, method):
                 "status": "Disbursed"
             }, fields=["name"])
             for staff_loan in staff_loans:
-                repayment_schedules = frappe.db.get_list("Staff Loan Repayment Schedule", filters={
-                    "parent": staff_loan.name,
-                    "payment_reference": doc.name
-                }, fields=["name"])
+                # repayment_schedules = frappe.db.get_list("Staff Loan Repayment Schedule", filters={
+                #     "parent": staff_loan.name,
+                #     "payment_reference": doc.name
+                # }, fields=["name"])
+                repayment_schedules = frappe.db.sql(f""" 
+                    SELECT name from `tabStaff Loan Repayment Schedule` where parent = '{staff_loan.name}' and payment_reference = '{doc.name}'
+                """)
                 for repayment_schedule in repayment_schedules:
                     repayment_schedule_doc = frappe.get_doc("Staff Loan Repayment Schedule", repayment_schedule.name)
                     repayment_schedule_doc.payment_reference = ""
                     repayment_schedule_doc.is_paid = 0
-                    repayment_schedule_doc.save()
+                    repayment_schedule_doc.save(ignore_permissions=True)
 
 @frappe.whitelist()
 def update_additional_salary(amount,loan,payment_date,loan_amount,input_amount,input_date,type,source):
