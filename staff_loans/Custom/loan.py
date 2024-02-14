@@ -237,7 +237,7 @@ def do_cancell(doc, method):
                 # }, fields=["name"])
                 repayment_schedules = frappe.db.sql(f""" 
                     SELECT name from `tabStaff Loan Repayment Schedule` where parent = '{staff_loan.name}' and payment_reference = '{doc.name}'
-                """)
+                """,as_dict=True)
                 for repayment_schedule in repayment_schedules:
                     repayment_schedule_doc = frappe.get_doc("Staff Loan Repayment Schedule", repayment_schedule.name)
                     repayment_schedule_doc.payment_reference = ""
