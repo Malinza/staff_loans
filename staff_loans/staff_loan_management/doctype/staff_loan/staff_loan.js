@@ -1,9 +1,23 @@
 // Copyright (c) 2023, VV System Developers LTD and contributors
 // For license information, please see license.txt
 
-{% include 'erpnext/loan_management/loan_common.js' %};
-
 frappe.ui.form.on("Staff Loan", {
+	applicant: function(frm) {
+		if (!["Loan Application", "Loan"].includes(frm.doc.doctype)) {
+			return;
+		}
+
+		if (frm.doc.applicant) {
+			frappe.model.with_doc(frm.doc.applicant_type, frm.doc.applicant, function() {
+				var applicant = frappe.model.get_doc(frm.doc.applicant_type, frm.doc.applicant);
+				frm.set_value("applicant_name",
+					applicant.employee_name || applicant.member_name);
+			});
+		}
+		else {
+			frm.set_value("applicant_name", null);
+		}
+	},
 	setup: function(frm) {
 		frm.make_methods = {
 			'Loan Disbursement': function() { frm.trigger('make_loan_disbursement') },
