@@ -95,7 +95,7 @@
    "fieldtype": "Link",
    "label": "Loan Application",
    "no_copy": 1,
-   "options": "Loan Application",
+   "options": "Staff Loan Application",
    "reqd": 1
   },
   {
@@ -142,7 +142,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Loan Type",
-   "options": "Loan Type",
+   "options": "Staff Loan Type",
    "reqd": 1
   },
   {

@@ -26,10 +26,10 @@
   "repayment_info",
   "repayment_method",
   "total_payable_amount",
+  "total_payable_interest",
   "column_break_11",
   "repayment_periods",
   "repayment_amount",
-  "total_payable_interest",
   "amended_from"
  ],
  "fields": [
@@ -94,7 +94,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Loan Type",
-   "options": "Loan Type",
+   "options": "Staff Loan Type",
    "reqd": 1
   },
   {
@@ -201,7 +201,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-02-14 15:48:07.063436",
+ "modified": "2024-02-14 17:40:56.506667",
  "modified_by": "Administrator",
  "module": "Staff Loan Management",
  "name": "Staff Loan Application",

@@ -163,7 +163,7 @@ doc_events = {
 
 # exempt linked doctypes from being automatically cancelled
 #
-# auto_cancel_exempted_doctypes = ["Auto Repeat"]
+auto_cancel_exempted_doctypes = ["Staff Loan","Staff Loan Repayment Schedule"]
 
 
 # User Data Protection

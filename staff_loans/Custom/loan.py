@@ -12,7 +12,7 @@ from dateutil.relativedelta import relativedelta
 
 @frappe.whitelist()
 def on_salary_slip_submit(doc, method):
-    staff_loan_settings_component = frappe.db.get_single_value('Staff Loan Settings', 'salary_component')
+    staff_loan_settings_component = frappe.db.get_single_value("Staff Loan Settings","salary_component") or frappe.throw("Please set Salary Component in Staff Loan Settings")
     if staff_loan_settings_component:
         journal_entry = frappe.new_doc("Journal Entry")
         journal_entry.voucher_type = "Journal Entry"
@@ -118,8 +118,7 @@ def on_submit(doc, method):
 def add_additional_salary(doc, method):
 
     # Check if the "Staff Loan" Salary Component exists
-    if not frappe.db.exists("Salary Component", "Staff Loan"):
-        frappe.throw("Staff Loan Salary Component does not exist")
+    salary_component = frappe.db.get_single_value("Staff Loan Settings","salary_component") or frappe.throw("Please set Salary Component in Staff Loan Settings")
         # Check if the document is being submitted
     for i in doc.employees:
             # Check if the "Staff Loan" document already exists
@@ -148,7 +147,7 @@ def add_additional_salary(doc, method):
                             new_additional_salary.employee = i.employee
                             new_additional_salary.employee_name = i.employee_name
                             new_additional_salary.company = doc.company
-                            new_additional_salary.salary_component = "Staff Loan"
+                            new_additional_salary.salary_component = salary_component
                             new_additional_salary.amount = repayment_amount
                             new_additional_salary.payroll_date = doc.start_date
                             new_additional_salary.insert()
@@ -160,8 +159,7 @@ def add_additional_salary(doc, method):
 def add_additional_salary_on_salary_slip(doc, method):
 
     # Check if the "Staff Loan" Salary Component exists
-    if not frappe.db.exists("Salary Component", "Staff Loan"):
-        frappe.throw("Staff Loan Salary Component does not exist")
+    salary_component = frappe.db.get_single_value("Staff Loan Settings","salary_component") or frappe.throw("Please set Salary Component in Staff Loan Settings")
         
     # Check if the "Staff Loan" document already exists
     if frappe.db.exists("Staff Loan", {"applicant": doc.employee, "status": "Disbursed"}):
@@ -187,7 +185,7 @@ def add_additional_salary_on_salary_slip(doc, method):
                         new_additional_salary.employee = doc.employee
                         new_additional_salary.employee_name = doc.employee_name
                         new_additional_salary.company = doc.company
-                        new_additional_salary.salary_component = "Staff Loan"
+                        new_additional_salary.salary_component = salary_component
                         new_additional_salary.amount = repayment_amount
                         new_additional_salary.payroll_date = doc.start_date
                         new_additional_salary.insert()
@@ -197,12 +195,13 @@ def add_additional_salary_on_salary_slip(doc, method):
 
 @frappe.whitelist()
 def do_cancel(doc, method):
+    salary_component = frappe.db.get_single_value("Staff Loan Settings","salary_component") or frappe.throw("Please set Salary Component in Staff Loan Settings")
     # doc.ignore_linked_doctypes = ("Staff Loan")
     for i in doc.employees:
-        if frappe.db.exists("Additional Salary", {"employee": i.employee, "salary_component": "Staff Loan", "payroll_date": doc.start_date, "docstatus": 1}):
+        if frappe.db.exists("Additional Salary", {"employee": i.employee, "salary_component": salary_component, "payroll_date": doc.start_date, "docstatus": 1}):
             add_salary = frappe.get_list("Additional Salary", filters={
                     "employee": i.employee,
-                    "salary_component": "Staff Loan",
+                    "salary_component": salary_component,
                     "payroll_date": doc.start_date,
                     "docstatus": 1
                 }, fields={"name"})
@@ -225,7 +224,8 @@ def do_cancel(doc, method):
 
 @frappe.whitelist()
 def do_cancell(doc, method):
-    if doc.salary_component == "Staff Loan":
+    salary_component = frappe.db.get_single_value("Staff Loan Settings","salary_component") or frappe.throw("Please set Salary Component in Staff Loan Settings")
+    if doc.salary_component == salary_component:
         if frappe.db.exists("Staff Loan", {"status": "Disbursed"}):
             staff_loans = frappe.get_all("Staff Loan", filters={
                 "status": "Disbursed"
@@ -237,7 +237,7 @@ def do_cancell(doc, method):
                 # }, fields=["name"])
                 repayment_schedules = frappe.db.sql(f""" 
                     SELECT name from `tabStaff Loan Repayment Schedule` where parent = '{staff_loan.name}' and payment_reference = '{doc.name}'
-                """)
+                """,as_dict=True)
                 for repayment_schedule in repayment_schedules:
                     repayment_schedule_doc = frappe.get_doc("Staff Loan Repayment Schedule", repayment_schedule.name)
                     repayment_schedule_doc.payment_reference = ""
