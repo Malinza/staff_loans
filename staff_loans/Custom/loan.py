@@ -56,7 +56,8 @@ def on_salary_slip_submit(doc, method):
 def get_staff_loans(employee):
     staff_loans = frappe.get_all("Staff Loan", filters={
         "applicant": employee, 
-        "status": "Disbursed"
+        "status": "Disbursed",
+        "docstatus": 1
     }, fields=["name"])
     return [frappe.get_doc("Staff Loan", loan.name) for loan in staff_loans]
 
@@ -123,12 +124,13 @@ def add_additional_salary(doc, method):
         # Check if the document is being submitted
     for i in doc.employees:
             # Check if the "Staff Loan" document already exists
-        if frappe.db.exists("Staff Loan", {"applicant": i.employee, "status": "Disbursed"}):
+        if frappe.db.exists("Staff Loan", {"applicant": i.employee, "status": "Disbursed","docstatus":1}):
                 # If it does, get the document
             # frappe.msgprint("Staff Loan document found {0}". format(i.employee))
             staff_loan_list = frappe.get_list("Staff Loan", filters={
                 "applicant": i.employee, 
-                "status": "Disbursed"
+                "status": "Disbursed",
+                "docstatus": 1
                 },fields={"name"})
             for loans in staff_loan_list:
                 # Get Repayment Schedule Amount
@@ -164,10 +166,11 @@ def add_additional_salary_on_salary_slip(doc, method):
         frappe.throw("Staff Loan Salary Component does not exist")
         
     # Check if the "Staff Loan" document already exists
-    if frappe.db.exists("Staff Loan", {"applicant": doc.employee, "status": "Disbursed"}):
+    if frappe.db.exists("Staff Loan", {"applicant": doc.employee, "status": "Disbursed","docstatus":1}):
         staff_loan_list = frappe.get_list("Staff Loan", filters={
             "applicant": doc.employee, 
-            "status": "Disbursed"
+            "status": "Disbursed",
+            "docstatus" : 1
             },fields={"name"})
         for loans in staff_loan_list:
             # Get Repayment Schedule Amount
@@ -207,10 +210,11 @@ def do_cancel(doc, method):
                     "docstatus": 1
                 }, fields={"name"})
             for add in add_salary:
-                if frappe.db.exists("Staff Loan", {"applicant": i.employee, "status": "Disbursed"}):
+                if frappe.db.exists("Staff Loan", {"applicant": i.employee, "status": "Disbursed","docstatus":1}):
                     staff_loan = frappe.get_list("Staff Loan", filters={
                             "applicant": i.employee, 
-                            "status": "Disbursed"
+                            "status": "Disbursed",
+                            "docstatus": 1
                             },fields={"name"})
                     for loans in staff_loan:
                         staff_loann = frappe.get_doc("Staff Loan", loans)
@@ -228,7 +232,8 @@ def do_cancell(doc, method):
     if doc.salary_component == "Staff Loan":
         if frappe.db.exists("Staff Loan", {"status": "Disbursed"}):
             staff_loans = frappe.get_all("Staff Loan", filters={
-                "status": "Disbursed"
+                "status": "Disbursed",
+                "docstatus": 1
             }, fields=["name"])
             for staff_loan in staff_loans:
                 # repayment_schedules = frappe.db.get_list("Staff Loan Repayment Schedule", filters={
