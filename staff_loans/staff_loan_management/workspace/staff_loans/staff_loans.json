@@ -55,13 +55,14 @@
    "is_query_report": 0,
    "label": "Staff Loans",
    "link_count": 3,
+   "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
   },
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Loan",
+   "label": "Staff Loan",
    "link_count": 0,
    "link_to": "Staff Loan",
    "link_type": "DocType",
@@ -71,7 +72,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Loan Repayment",
+   "label": "Staff Loan Repayment",
    "link_count": 0,
    "link_to": "Staff Loan Repayment",
    "link_type": "DocType",
@@ -81,7 +82,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Loan Settings",
+   "label": "Staff Loan Settings",
    "link_count": 0,
    "link_to": "Staff Loan Settings",
    "link_type": "DocType",
@@ -89,8 +90,8 @@
    "type": "Link"
   }
  ],
- "modified": "2023-06-06 17:09:45.183062",
- "modified_by": "Administrator",
+ "modified": "2024-02-24 12:02:12.774554",
+ "modified_by": "ibrahim@vvsdtz.com",
  "module": "Staff Loan Management",
  "name": "Staff Loans",
  "number_cards": [],
