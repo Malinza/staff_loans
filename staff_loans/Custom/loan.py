@@ -134,9 +134,16 @@ def add_additional_salary(doc, method):
                 },fields={"name"})
             for loans in staff_loan_list:
                 # Get Repayment Schedule Amount
-                new_checkk = datetime.strptime(doc.start_date, "%Y-%m-%d").date()
-                # frappe.msgprint("Date is {0}". format(new_checkk))
-                new_check = new_checkk.replace(day=1)
+                new_checkk = ""
+                if isinstance(doc.start_date,str):
+                    new_checkk = datetime.strptime(doc.start_date, "%Y-%m-%d").date()
+                    # frappe.msgprint("Date is {0}". format(new_checkk))
+                    new_check = new_checkk.replace(day=1)
+                elif isinstance(doc.start_date,datetime.date()):
+                    # new_checkk = doc.start_date
+                    new_check = doc.start_date.replace(day=1)
+                     
+
                 repayment_amount = 0
                 staff_loan = frappe.get_doc("Staff Loan", loans)
                 for d in staff_loan.repayment_schedule:
