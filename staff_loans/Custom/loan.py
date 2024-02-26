@@ -5,9 +5,9 @@ from frappe.utils import nowdate
 from frappe.utils import (
     get_first_day,
 )
-from datetime import datetime
+
 from frappe.utils import flt
-from datetime import datetime,timedelta
+from datetime import datetime,timedelta,date
 from dateutil.relativedelta import relativedelta
 
 @frappe.whitelist()
@@ -134,12 +134,13 @@ def add_additional_salary(doc, method):
                 },fields={"name"})
             for loans in staff_loan_list:
                 # Get Repayment Schedule Amount
+                # start_date = frappe.utils.getdate("2024-04-01")
                 new_checkk = ""
-                if isinstance(doc.start_date,str):
+                if isinstance(doc.start_date, str):
                     new_checkk = datetime.strptime(doc.start_date, "%Y-%m-%d").date()
                     # frappe.msgprint("Date is {0}". format(new_checkk))
                     new_check = new_checkk.replace(day=1)
-                elif isinstance(doc.start_date,datetime.date()):
+                elif isinstance(doc.start_date, date):
                     # new_checkk = doc.start_date
                     new_check = doc.start_date.replace(day=1)
                      
