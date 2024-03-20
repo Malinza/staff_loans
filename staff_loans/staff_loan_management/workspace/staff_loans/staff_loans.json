@@ -15,44 +15,6 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Report",
-   "link_count": 3,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Staff Loan Outstanding",
-   "link_count": 0,
-   "link_to": "Staff Loan Outstanding",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Staff Loan Repayment Details",
-   "link_count": 0,
-   "link_to": "Staff Loan Repayment Details",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Staff Loan Repayment and Closure",
-   "link_count": 0,
-   "link_to": "Staff Loan Repayment and Closure",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
    "label": "Staff Loans",
    "link_count": 3,
    "link_type": "DocType",
@@ -88,9 +50,48 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Report",
+   "link_count": 3,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Staff Loan Outstanding",
+   "link_count": 0,
+   "link_to": "Staff Loan Outstanding",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Staff Loan Repayment Details",
+   "link_count": 0,
+   "link_to": "Staff Loan Repayment Details",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Staff Loan Repayment and Closure",
+   "link_count": 0,
+   "link_to": "Staff Loan Repayment and Closure",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2024-02-24 12:02:12.774554",
+ "modified": "2024-03-20 17:37:19.711943",
  "modified_by": "ibrahim@vvsdtz.com",
  "module": "Staff Loan Management",
  "name": "Staff Loans",
