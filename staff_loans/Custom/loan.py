@@ -79,6 +79,8 @@ def make_loan_disbursement_journal_entry(loan, company,applicant,debit_account,a
     disbursement_entry.posting_date = nowdate()
     disbursement_entry.cheque_no = loan
     disbursement_entry.cheque_date = ref_date
+    applicant_name = frappe.db.get_value(applicant_type,applicant,"employee_name")
+    disbursement_entry.user_remark = f"Against Staff Loan: {loan}\n{applicant_name}"
 
     # create a new item in the table
     new_item = disbursement_entry.append('accounts', {})
