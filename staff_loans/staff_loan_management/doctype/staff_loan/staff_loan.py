@@ -91,6 +91,10 @@ class StaffLoan(AccountsController):
 	def after_submit(self):
 		self.set_status_from_docstatus()
 
+	def before_cancel(self):
+		if self.status == "Disbursed":
+			frappe.throw("You can't Cancel a Disbursed Loan, Please Write Off the Loan")
+
 	def on_cancel(self):
 		self.before_cancel_document()
 		self.unlink_loan_security_pledge()
