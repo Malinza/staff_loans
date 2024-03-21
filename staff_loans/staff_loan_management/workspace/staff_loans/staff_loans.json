@@ -15,44 +15,6 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Report",
-   "link_count": 3,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Staff Loan Outstanding",
-   "link_count": 0,
-   "link_to": "Staff Loan Outstanding",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Staff Loan Repayment Details",
-   "link_count": 0,
-   "link_to": "Staff Loan Repayment Details",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Staff Loan Repayment and Closure",
-   "link_count": 0,
-   "link_to": "Staff Loan Repayment and Closure",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
    "label": "Staff Loans",
    "link_count": 5,
    "link_type": "DocType",
@@ -108,10 +70,49 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Report",
+   "link_count": 3,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Staff Loan Outstanding",
+   "link_count": 0,
+   "link_to": "Staff Loan Outstanding",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Staff Loan Repayment Details",
+   "link_count": 0,
+   "link_to": "Staff Loan Repayment Details",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Staff Loan Repayment and Closure",
+   "link_count": 0,
+   "link_to": "Staff Loan Repayment and Closure",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2024-02-15 11:47:34.617035",
- "modified_by": "ibrahim@vvsdtz.com",
+ "modified": "2024-03-21 10:40:34.549189",
+ "modified_by": "Administrator",
  "module": "Staff Loan Management",
  "name": "Staff Loans",
  "number_cards": [],
