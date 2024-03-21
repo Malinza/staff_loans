@@ -36,6 +36,7 @@ class StaffLoan(AccountsController):
 		self.set_status_from_docstatus(self)
 
 	def validate(self):
+		self.validate_loan_application()
 		self.set_loan_amount()
 		self.validate_loan_amount()
 		self.set_missing_fields()
@@ -56,6 +57,12 @@ class StaffLoan(AccountsController):
 
 		self.calculate_totals()
 
+	def validate_loan_application(self):
+		if self.loan_application:
+			status = frappe.db.get_value("Loan Application",self.loan_application,"status")
+			docstatus = frappe.db.get_value("Loan Application",self.loan_application,"docstatus")
+			if int(docstatus) != 1 or status != "Approved": 
+				frappe.throw("Please Submit or Approve Loan Application before referencing it")
 	
 	def validate_accounts(self):
 		for fieldname in [
@@ -91,6 +98,10 @@ class StaffLoan(AccountsController):
 	def on_cancel(self):
 		self.before_cancel_document()
 		self.ignore_linked_doctypes = ["GL Entry", "Payment Ledger Entry"]
+		
+	def before_cancel(self):
+		if self.status == "Disbursed":
+			frappe.throw("You can't Cancel a Disbursed Loan, Please Write Off the Loan")
 
 	def before_cancel_document(self):
 		connected_docs = frappe.get_list("Journal Entry", filters={"cheque_no": self.name},fields={"docstatus","name"})
