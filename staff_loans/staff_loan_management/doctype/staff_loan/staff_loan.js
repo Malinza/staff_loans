@@ -10,6 +10,13 @@ frappe.ui.form.on("Staff Loan", {
 			'Loan Write Off': function() { frm.trigger('make_loan_write_off_entry') },
 			'Loan Repayment By External Sources': function() { frm.trigger('make_loan_write_off_by_external_sources_entry') },
 		}
+		frm.set_query("applicant", function () {
+			return {
+				"filters": {
+					"status": "Active"
+				}
+			};
+		});
 	},
 	onload: function (frm) {
 		// Ignore loan security pledge on cancel of loan

@@ -5,7 +5,7 @@ from frappe.model.mapper import get_mapped_doc
 def create_loans(source_name, target_doc=None, submit=0):
 	def update_accounts(source_doc, target_doc, source_parent):
 		account_details = frappe.get_all(
-			"Loan Type",
+			"Staff Loan Type",
 			fields=[
 				"mode_of_payment",
 				"payment_account",
@@ -27,10 +27,10 @@ def create_loans(source_name, target_doc=None, submit=0):
 		target_doc.loan_application = source_name
 
 	doclist = get_mapped_doc(
-		"Loan Application",
+		"Staff Loan Application",
 		source_name,
 		{
-			"Loan Application": {
+			"Staff Loan Application": {
 				"doctype": "Staff Loan",
 				"validation": {"docstatus": ["=", 1]},
 				"postprocess": update_accounts,

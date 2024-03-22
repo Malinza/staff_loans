@@ -38,8 +38,13 @@ class StaffLoan(AccountsController):
 	def after_submit_on_update(self):
 		self.set_status_from_docstatus(self)
 
+	def before_insert(self):
+		self.status = "Sanctioned"
+		self.disbursed_amount = 0.00
+
 	def validate(self):
 		self.validate_loan_application()
+		self.validate_employee_status()
 		self.set_loan_amount()
 		self.validate_loan_amount()
 		self.set_missing_fields()
@@ -62,10 +67,15 @@ class StaffLoan(AccountsController):
 
 	def validate_loan_application(self):
 		if self.loan_application:
-			status = frappe.db.get_value("Loan Application",self.loan_application,"status")
-			docstatus = frappe.db.get_value("Loan Application",self.loan_application,"docstatus")
+			status = frappe.db.get_value("Staff Loan Application",self.loan_application,"status")
+			docstatus = frappe.db.get_value("Staff Loan Application",self.loan_application,"docstatus")
 			if int(docstatus) != 1 or status != "Approved": 
-				frappe.throw("Please Submit or Approve Loan Application before referencing it")
+				frappe.throw(f"Please Submit or Approve Staff Loan Application ({self.loan_application}) before referencing it")
+
+	def validate_employee_status(self):
+		employee_status = frappe.db.get_value("Employee",self.applicant,"status")
+		if employee_status != "Active":
+			frappe.throw(_("Can Only Select an Active Employee."))
 	
 	def validate_accounts(self):
 		for fieldname in [
@@ -90,8 +100,8 @@ class StaffLoan(AccountsController):
 			if not self.cost_center:
 				frappe.throw(_("Cost center is mandatory for loans having rate of interest greater than 0"))
 
-	def on_submit(self):
-		self.link_loan_security_pledge()
+	# def on_submit(self):
+	# 	self.link_loan_security_pledge()
 		# Interest accrual for backdated term loans
 		# self.accrue_loan_interest()
 
@@ -137,7 +147,7 @@ class StaffLoan(AccountsController):
 			self.posting_date = nowdate()
 
 		if self.loan_type and not self.rate_of_interest:
-			self.rate_of_interest = frappe.db.get_value("Loan Type", self.loan_type, "rate_of_interest")
+			self.rate_of_interest = frappe.db.get_value("Staff Loan Type", self.loan_type, "rate_of_interest")
 
 		if self.repayment_method == "Repay Over Number of Periods":
 			self.monthly_repayment_amount = get_monthly_repayment_amount(
@@ -165,7 +175,7 @@ class StaffLoan(AccountsController):
 			frappe.throw(_("Repayment Start Date is mandatory for term loans"))
 
 		schedule_type_details = frappe.db.get_value(
-			"Loan Type", self.loan_type, ["repayment_schedule_type", "repayment_date_on"], as_dict=1
+			"Staff Loan Type", self.loan_type, ["repayment_schedule_type", "repayment_date_on"], as_dict=1
 		)
 
 		self.repayment_schedule = []
@@ -258,7 +268,7 @@ class StaffLoan(AccountsController):
 
 	def set_loan_amount(self):
 		if self.loan_application and not self.loan_amount:
-			self.loan_amount = frappe.db.get_value("Loan Application", self.loan_application, "loan_amount")
+			self.loan_amount = frappe.db.get_value("Staff Loan Application", self.loan_application, "loan_amount")
 
 	def validate_loan_amount(self):
 		if self.maximum_loan_amount and self.loan_amount > self.maximum_loan_amount:
@@ -411,7 +421,7 @@ def request_loan_closure(loan,loan_amount, total_amount_paid):
 
 @frappe.whitelist()
 def get_loan_application(loan_application):
-	loan = frappe.get_doc("Loan Application", loan_application)
+	loan = frappe.get_doc("Staff Loan Application", loan_application)
 	if loan:
 		return loan.as_dict()
 
