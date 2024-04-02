@@ -17,7 +17,7 @@ def on_salary_slip_submit(doc, method):
         journal_entry = frappe.new_doc("Journal Entry")
         journal_entry.voucher_type = "Journal Entry"
         journal_entry.company = doc.company
-        journal_entry.posting_date = nowdate()
+        journal_entry.posting_date = doc.end_date
         journal_entry.cheque_no = doc.name
         journal_entry.cheque_date = doc.posting_date
 
@@ -51,6 +51,8 @@ def on_salary_slip_submit(doc, method):
         journal_entry.insert()
         journal_entry.submit()
         return journal_entry
+    else:
+        frappe.throw("Please setup Staff Loan Settings")
 
 
 def get_staff_loans(employee):
