@@ -14,43 +14,44 @@ from dateutil.relativedelta import relativedelta
 def on_salary_slip_submit(doc, method):
     staff_loan_settings_component = frappe.db.get_single_value('Staff Loan Settings', 'salary_component')
     if staff_loan_settings_component:
-        journal_entry = frappe.new_doc("Journal Entry")
-        journal_entry.voucher_type = "Journal Entry"
-        journal_entry.company = doc.company
-        journal_entry.posting_date = doc.end_date
-        journal_entry.cheque_no = doc.name
-        journal_entry.cheque_date = doc.posting_date
+        if any(staff_loan_settings_component == deduction.salary_component for deduction in doc.deductions):
+            journal_entry = frappe.new_doc("Journal Entry")
+            journal_entry.voucher_type = "Journal Entry"
+            journal_entry.company = doc.company
+            journal_entry.posting_date = doc.end_date
+            journal_entry.cheque_no = doc.name
+            journal_entry.cheque_date = doc.posting_date
 
 
-        total_amount_salary_slip = 0
-        for deduction in doc.deductions:
-            if deduction.salary_component == staff_loan_settings_component:
-                total_amount_salary_slip += deduction.amount
-                staff_loans = get_staff_loans(doc.employee)
-                journal_entry.append("accounts", {
-                    "account": frappe.db.get_single_value('Staff Loan Settings', 'credit_account'),
-                    "party_type": "Employee",
-                    "party": doc.employee,
-                    "debit_in_account_currency": 0,
-                    "credit_in_account_currency": deduction.amount
-                })
-                for staff_loan in staff_loans:
-                    update_staff_loan_repayment_schedule(staff_loan.name, deduction.additional_salary)
-        
-        # create a new item in the table
-        new_item = journal_entry.append('accounts', {})
+            total_amount_salary_slip = 0
+            for deduction in doc.deductions:
+                if deduction.salary_component == staff_loan_settings_component:
+                    total_amount_salary_slip += deduction.amount
+                    staff_loans = get_staff_loans(doc.employee)
+                    journal_entry.append("accounts", {
+                        "account": frappe.db.get_single_value('Staff Loan Settings', 'credit_account'),
+                        "party_type": "Employee",
+                        "party": doc.employee,
+                        "debit_in_account_currency": 0,
+                        "credit_in_account_currency": deduction.amount
+                    })
+                    for staff_loan in staff_loans:
+                        update_staff_loan_repayment_schedule(staff_loan.name, deduction.additional_salary)
+            
+            # create a new item in the table
+            new_item = journal_entry.append('accounts', {})
 
-        # set the values for the item
-        new_item.account = frappe.db.get_single_value('Staff Loan Settings', 'debit_account')
-        new_item.debit_in_account_currency = total_amount_salary_slip
-        new_item.credit_in_account_currency = 0
-        journal_entry.user_remark = _("Accrual Journal Entry for salary slip {0} for {1} component").format(
-                    doc.name, staff_loan_settings_component
-                )
-        journal_entry.title = frappe.db.get_single_value('Staff Loan Settings', 'debit_account')
-        journal_entry.insert()
-        journal_entry.submit()
-        return journal_entry
+            # set the values for the item
+            new_item.account = frappe.db.get_single_value('Staff Loan Settings', 'debit_account')
+            new_item.debit_in_account_currency = total_amount_salary_slip
+            new_item.credit_in_account_currency = 0
+            journal_entry.user_remark = _("Accrual Journal Entry for salary slip {0} for {1} component").format(
+                        doc.name, staff_loan_settings_component
+                    )
+            journal_entry.title = frappe.db.get_single_value('Staff Loan Settings', 'debit_account')
+            journal_entry.insert()
+            journal_entry.submit()
+            return journal_entry
     else:
         frappe.throw("Please setup Staff Loan Settings")
 
