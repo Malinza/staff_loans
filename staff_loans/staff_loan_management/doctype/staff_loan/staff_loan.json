@@ -40,8 +40,6 @@
   "column_break_9",
   "loan_account",
   "payment_account",
-  "interest_income_account",
-  "penalty_income_account",
   "section_break_15",
   "change_months_paid",
   "deduct_amount",
@@ -303,32 +301,6 @@
    "reqd": 1
   },
   {
-   "default": "0",
-   "fetch_from": "loan_type.interest_income_account",
-   "fieldname": "interest_income_account",
-   "fieldtype": "Link",
-   "hidden": 1,
-   "label": "Interest Income Account",
-   "options": "Account",
-   "print_hide": 1,
-   "read_only": 1,
-   "report_hide": 1,
-   "reqd": 1
-  },
-  {
-   "default": "0",
-   "fetch_from": "loan_type.penalty_income_account",
-   "fieldname": "penalty_income_account",
-   "fieldtype": "Link",
-   "hidden": 1,
-   "label": "Penalty Income Account",
-   "options": "Account",
-   "print_hide": 1,
-   "read_only": 1,
-   "report_hide": 1,
-   "reqd": 1
-  },
-  {
    "depends_on": "is_term_loan",
    "fieldname": "section_break_15",
    "fieldtype": "Section Break",
@@ -526,7 +498,7 @@
    "link_fieldname": "loan"
   }
  ],
- "modified": "2024-03-22 16:14:22.061327",
+ "modified": "2024-04-06 14:01:49.444859",
  "modified_by": "Administrator",
  "module": "Staff Loan Management",
  "name": "Staff Loan",

@@ -36,7 +36,7 @@ frappe.ui.form.on('Staff Loan Application', {
 		if (frm.doc.status == "Approved" && frm.doc.docstatus == 1) {
 			
 				frm.add_custom_button(__('Staff Loan'), function() {
-					frm.trigger('create_loans');
+					frm.trigger('create_loan');
 				},__('Create'))
 		}
 	},

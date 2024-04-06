@@ -1,8 +1,6 @@
 // Copyright (c) 2023, VV System Developers LTD and contributors
 // For license information, please see license.txt
 
-{% include 'erpnext/loan_management/loan_common.js' %};
-
 frappe.ui.form.on("Staff Loan", {
 	setup: function(frm) {
 		frm.make_methods = {
@@ -39,18 +37,6 @@ frappe.ui.form.on("Staff Loan", {
 					"company": frm.doc.company
 				}
 			};
-		});
-
-		$.each(["penalty_income_account", "interest_income_account"], function(i, field) {
-			frm.set_query(field, function () {
-				return {
-					"filters": {
-						"company": frm.doc.company,
-						"root_type": "Income",
-						"is_group": 0
-					}
-				};
-			});
 		});
 
 		$.each(["payment_account", "loan_account", "disbursement_account"], function (i, field) {

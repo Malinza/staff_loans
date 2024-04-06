@@ -81,8 +81,6 @@ class StaffLoan(AccountsController):
 		for fieldname in [
 			"payment_account",
 			"loan_account",
-			"interest_income_account",
-			"penalty_income_account",
 		]:
 			company = frappe.get_value("Account", self.get(fieldname), "company")
 

@@ -23,11 +23,9 @@
   "account_details_section",
   "mode_of_payment",
   "disbursement_account",
-  "payment_account",
   "column_break_12",
   "loan_account",
-  "interest_income_account",
-  "penalty_income_account",
+  "payment_account",
   "amended_from"
  ],
  "fields": [
@@ -161,20 +159,6 @@
    "reqd": 1
   },
   {
-   "fieldname": "interest_income_account",
-   "fieldtype": "Link",
-   "label": "Interest Income Account",
-   "options": "Account",
-   "reqd": 1
-  },
-  {
-   "fieldname": "penalty_income_account",
-   "fieldtype": "Link",
-   "label": "Penalty Income Account",
-   "options": "Account",
-   "reqd": 1
-  },
-  {
    "fieldname": "amended_from",
    "fieldtype": "Link",
    "label": "Amended From",
@@ -187,7 +171,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-03-22 15:56:45.937775",
+ "modified": "2024-04-06 13:52:03.696779",
  "modified_by": "Administrator",
  "module": "Staff Loan Management",
  "name": "Staff Loan Type",
