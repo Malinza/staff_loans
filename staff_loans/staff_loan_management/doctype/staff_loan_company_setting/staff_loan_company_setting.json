@@ -1,87 +1,83 @@
 {
  "actions": [],
- "allow_rename": 1,
- "creation": "2023-06-06 17:07:57.719558",
+ "autoname": "field:company",
+ "creation": "2024-04-08 12:50:06.017162",
  "default_view": "List",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "enable_multi_company",
-  "section_break_8vz1n",
+  "company",
   "credit_account",
-  "salary_component",
-  "column_break_8escm",
-  "debit_account",
-  "jv_posting_date_based_on"
+  "jv_posting_date_based_on",
+  "column_break_kaf9v",
+  "staff_loan_component",
+  "debit_account"
  ],
  "fields": [
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1,
+   "unique": 1
+  },
   {
    "fieldname": "credit_account",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Credit Account (Staff Loan)",
-   "mandatory_depends_on": "eval: doc.enable_multi_company == 0",
    "options": "Account",
-   "read_only_depends_on": "eval: doc.enable_multi_company"
+   "reqd": 1
   },
   {
-   "fieldname": "column_break_8escm",
+   "fieldname": "column_break_kaf9v",
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "salary_component",
+   "fieldname": "staff_loan_component",
    "fieldtype": "Link",
-   "label": "Salary Component",
-   "mandatory_depends_on": "eval: doc.enable_multi_company == 0",
+   "in_list_view": 1,
+   "label": "Staff Loan Component",
    "options": "Salary Component",
-   "read_only_depends_on": "eval: doc.enable_multi_company"
+   "reqd": 1
   },
   {
    "fieldname": "debit_account",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Debit Account (Staff Loan Receivable)",
-   "mandatory_depends_on": "eval: doc.enable_multi_company == 0",
    "options": "Account",
-   "read_only_depends_on": "eval: doc.enable_multi_company"
-  },
-  {
-   "default": "0",
-   "fieldname": "enable_multi_company",
-   "fieldtype": "Check",
-   "label": "Enable Multi Company Support"
-  },
-  {
-   "depends_on": "eval: doc.enable_multi_company == 0",
-   "fieldname": "section_break_8vz1n",
-   "fieldtype": "Section Break"
+   "reqd": 1
   },
   {
    "default": "End Date of Salary Slip",
    "fieldname": "jv_posting_date_based_on",
    "fieldtype": "Select",
    "label": "Accrual JV Posting Date Based on",
-   "mandatory_depends_on": "eval: doc.enable_multi_company == 0",
    "options": "Start Date of Salary Slip\nEnd Date of Salary Slip",
-   "read_only_depends_on": "eval: doc.enable_multi_company"
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
- "issingle": 1,
  "links": [],
- "modified": "2024-04-08 15:14:28.525696",
+ "modified": "2024-04-08 16:12:48.505958",
  "modified_by": "Administrator",
  "module": "Staff Loan Management",
- "name": "Staff Loan Settings",
+ "name": "Staff Loan Company Setting",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
    "create": 1,
    "delete": 1,
    "email": 1,
+   "export": 1,
    "print": 1,
    "read": 1,
+   "report": 1,
    "role": "System Manager",
    "share": 1,
    "write": 1

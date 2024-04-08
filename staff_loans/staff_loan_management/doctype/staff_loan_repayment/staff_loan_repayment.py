@@ -168,7 +168,7 @@ class StaffLoanRepayment(Document):
 		# }
 		# frappe.throw("args: " + str(args))
 		response = frappe.call(
-    		"staff_loans.Custom.loan.update_additional_salary",
+    		"staff_loans.custom.loan.update_additional_salary",
 			amount=repayment_amount,
 			loan=self.loan,
 			payment_date=last_payment_date.strftime("%Y-%m-%d"),

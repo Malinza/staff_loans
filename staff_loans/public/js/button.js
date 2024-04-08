@@ -17,7 +17,7 @@ frappe.ui.form.on('Loan Application', {
 		}
 
 		frappe.model.open_mapped_doc({
-			method: 'staff_loans.Custom.button_method.create_loans',
+			method: 'staff_loans.custom.button_method.create_loans',
 			frm: frm
 		});
 	}

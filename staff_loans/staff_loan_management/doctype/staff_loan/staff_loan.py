@@ -30,6 +30,24 @@ from erpnext.loan_management.doctype.loan_security_unpledge.loan_security_unpled
 
 
 class StaffLoan(AccountsController):
+	def before_save(self):
+		enable_multi_company = frappe.db.get_single_value('Staff Loan Settings', 'enable_multi_company')
+
+		# Check if the "Staff Loan" Salary Component exists
+		if enable_multi_company:
+			company= frappe.db.get_value("Staff Loan Company Setting",{'company':self.company},["company"])
+			if not company:
+				frappe.throw("Please Create a Staff Loan Company Setting or disable Multi Company Support on Staff Loan Settings")
+
+	def onload(self):
+		enable_multi_company = frappe.db.get_single_value('Staff Loan Settings', 'enable_multi_company')
+
+		# Check if the "Staff Loan" Salary Component exists
+		if not enable_multi_company:
+			staff_loan_settings_component = frappe.db.get_single_value('Staff Loan Settings', 'salary_component')
+			if not staff_loan_settings_component:
+				frappe.throw("Please set Staff Loan Component on Staff Loan Settings")
+
 	def on_update(self):
 		self.validate_accounts()
 		self.validate_cost_center()

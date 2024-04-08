@@ -83,7 +83,7 @@ frappe.ui.form.on("Staff Loan", {
 				var formattedDaten = [year, month.toString().padStart(2, '0'), day.toString().padStart(2, '0')].join('-');
 
 				frappe.call({
-					method: "staff_loans.Custom.loan.update_additional_salary",
+					method: "staff_loans.custom.loan.update_additional_salary",
 					args: {
 						amount: 0,
 						loan_amount: frm.doc.loan_amount,
@@ -127,7 +127,7 @@ frappe.ui.form.on("Staff Loan", {
 				var formattedDaten = [year, month.toString().padStart(2, '0'), day.toString().padStart(2, '0')].join('-');
 
 				frappe.call({
-					method: "staff_loans.Custom.loan.update_additional_salary",
+					method: "staff_loans.custom.loan.update_additional_salary",
 					args: {
 						amount: data.amount,
 
@@ -206,7 +206,7 @@ frappe.ui.form.on("Staff Loan", {
 				frappe.throw(__("Next Payment Start Date should be greater than deducted date of {0}", [last_payment_date]));
 			}
 			frappe.call({
-				method: "staff_loans.Custom.loan.update_additional_salary",
+				method: "staff_loans.custom.loan.update_additional_salary",
 				args: {
 					amount: last_payment,
 					loan_amount: frm.doc.loan_amount,
@@ -269,7 +269,7 @@ frappe.ui.form.on("Staff Loan", {
 				var formattedDaten = [year, month.toString().padStart(2, '0'), day.toString().padStart(2, '0')].join('-');
 
 				frappe.call({
-					method: "staff_loans.Custom.loan.update_additional_salary",
+					method: "staff_loans.custom.loan.update_additional_salary",
 					args: {
 						amount: data.amount,
 
@@ -365,7 +365,7 @@ frappe.ui.form.on("Staff Loan", {
 				"credit_account": frm.doc.disbursement_account,
 				"as_dict": 1
 			},
-			method: "staff_loans.Custom.loan.make_loan_disbursement_journal_entry",
+			method: "staff_loans.custom.loan.make_loan_disbursement_journal_entry",
 			callback: function(r) {
 				if (r.message) {
 					var doc = frappe.model.sync(r.message)[0];
