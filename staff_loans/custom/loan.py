@@ -109,6 +109,15 @@ def get_staff_loans(employee):
     }, fields=["name"])
     return [frappe.get_doc("Staff Loan", loan.name) for loan in staff_loans]
 
+@frappe.whitelist()
+def cancel_jv_based_on_salary_slip_cancel(doc, method):
+    get_jv_based_on_salary_slip = frappe.db.get_list("Journal Entry",{
+        "cheque_no": doc.name
+    },["name"])
+    if len(get_jv_based_on_salary_slip) > 0:
+        for jv in get_jv_based_on_salary_slip:
+            jv_doc = frappe.get_doc("Journal Entry", jv.name)
+            jv_doc.cancel()
 
 def update_staff_loan_repayment_schedule(staff_loan_name, payment_reference):
     staff_loan = frappe.get_doc("Staff Loan", staff_loan_name)
