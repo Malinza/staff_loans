@@ -11,6 +11,47 @@ from datetime import datetime,timedelta,date
 from dateutil.relativedelta import relativedelta
 
 @frappe.whitelist()
+def recalculate_staff_loan_repayments():
+    """
+    Recalculate repayment schedules for all disbursed staff loans and update their statuses if needed.
+    """
+    # Fetch all disbursed staff loans with docstatus 1
+    disbursed_loans = frappe.get_all(
+        "Staff Loan",
+        filters={
+            "status": "Disbursed",
+            "docstatus": 1
+        },
+        fields=["name"]
+    )
+
+    # Iterate through each loan
+    for loan in disbursed_loans:
+        # Fetch the loan document
+        staff_loan_doc = frappe.get_doc("Staff Loan", loan.name)
+        total_paid_amount = 0.00
+
+        # Calculate the total amount paid from the repayment schedule
+        for repayment in staff_loan_doc.repayment_schedule:
+            if repayment.is_paid == 1:
+                total_paid_amount += repayment.total_payment
+
+        # Update the total amount paid in the loan document if necessary
+        if staff_loan_doc.total_amount_paid != total_paid_amount:
+            staff_loan_doc.total_amount_paid = total_paid_amount
+
+        # Close the loan if fully paid and not already closed
+        if staff_loan_doc.total_payment == staff_loan_doc.total_amount_paid and staff_loan_doc.status != "Closed":
+            staff_loan_doc.status = "Closed"
+
+        # Save the updated loan document
+        staff_loan_doc.save()
+
+    # Inform the user that the recalculation is complete
+    return frappe.msgprint("Completed Recalculation of Staff Loans Repayment Schedule")
+
+
+@frappe.whitelist()
 def on_salary_slip_submit(doc, method):
     enable_multi_company = frappe.db.get_single_value('Staff Loan Settings', 'enable_multi_company')
     if enable_multi_company:
@@ -121,11 +162,14 @@ def cancel_jv_based_on_salary_slip_cancel(doc, method):
 
 def update_staff_loan_repayment_schedule(staff_loan_name, payment_reference):
     staff_loan = frappe.get_doc("Staff Loan", staff_loan_name)
+    total_amount_paid = 0.00
     for repayment in staff_loan.repayment_schedule:
         if repayment.payment_reference == payment_reference:
-            repayment.is_paid = 1
-            repayment.save()
-            staff_loan.total_amount_paid += repayment.total_payment
+            if not repayment.is_paid:
+                repayment.is_paid = 1
+                total_amount_paid += repayment.total_payment
+            
+    staff_loan.total_amount_paid += total_amount_paid
     staff_loan.save()
 
 @frappe.whitelist()

@@ -293,24 +293,24 @@ frappe.ui.form.on("Staff Loan", {
 	},
 
 	refresh: function (frm) {
-		if (frm.doc.docstatus == 1) {
-		let total = 0;
-		let table_field = frappe.get_doc("Staff Loan", frm.doc.name).repayment_schedule;
+	// 	if (frm.doc.docstatus == 1) {
+	// 	let total = 0;
+	// 	let table_field = frm.doc.repayment_schedule;
 
-		for (let i = 0; i < table_field.length; i++) {
-			if (table_field[i].is_paid) {
-				total += table_field[i].total_payment;
-			}
-		}
-		if (frm.doc.total_amount_paid != total) {
-		frm.set_value("total_amount_paid", total);
-		frm.save("Update");
-	}
-		if (frm.doc.loan_amount === frm.doc.total_amount_paid && frm.doc.status != "Closed") {
-			frm.set_value("status", "Closed");
-			frm.save("Update");
-		}
-	}
+	// 	for (let i = 0; i < table_field.length; i++) {
+	// 		if (table_field[i].is_paid) {
+	// 			total += table_field[i].total_payment;
+	// 		}
+	// 	}
+	// 	if (frm.doc.total_amount_paid != total) {
+	// 	frm.set_value("total_amount_paid", total);
+	// 	frm.save("Update");
+	// }
+	// 	if (frm.doc.loan_amount === frm.doc.total_amount_paid && frm.doc.status != "Closed") {
+	// 		frm.set_value("status", "Closed");
+	// 		frm.save("Update");
+	// 	}
+	// }
 		if (frm.doc.repayment_schedule_type == "Pro-rated calendar months") {
 			frm.set_df_property("repayment_start_date", "label", "Interest Calculation Start Date");
 		}
