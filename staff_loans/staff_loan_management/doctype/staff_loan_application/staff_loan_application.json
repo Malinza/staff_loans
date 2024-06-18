@@ -40,6 +40,7 @@
    "fieldname": "applicant_type",
    "fieldtype": "Data",
    "label": "Applicant Type",
+   "read_only": 1,
    "reqd": 1
   },
   {
@@ -220,7 +221,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-03-22 15:56:33.095390",
+ "modified": "2024-06-18 16:42:22.540916",
  "modified_by": "Administrator",
  "module": "Staff Loan Management",
  "name": "Staff Loan Application",

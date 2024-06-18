@@ -96,7 +96,7 @@ frappe.ui.form.on("Staff Loan", {
 					},
 					callback: function(me){
 							if (me.message === "pass"){
-								frm.refresh_field("repayment_schedule");
+								cur_frm.reload_doc();
 							}
 					}
 				});
@@ -455,14 +455,14 @@ frappe.ui.form.on("Staff Loan", {
 		frm.toggle_enable("repayment_periods", frm.doc.repayment_method == "Repay Over Number of Periods")
 	}
 });
-frappe.ui.form.on("Repayment", "is_paid", function(frm) {
-	let total = 0;
-	let table_field = frappe.get_doc("Staff Loan", frm.doc.name).repayment_schedule;
+// frappe.ui.form.on("Repayment", "is_paid", function(frm) {
+// 	let total = 0;
+// 	let table_field = frappe.get_doc("Staff Loan", frm.doc.name).repayment_schedule;
 
-	for (let i = 0; i < table_field.length; i++) {
-		if (table_field[i].is_paid) {
-			total += table_field[i].total_payment;
-		}
-	}
-	frm.set_value("total_amount_paid", total);
-});
+// 	for (let i = 0; i < table_field.length; i++) {
+// 		if (table_field[i].is_paid) {
+// 			total += table_field[i].total_payment;
+// 		}
+// 	}
+// 	frm.set_value("total_amount_paid", total);
+// });

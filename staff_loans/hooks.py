@@ -109,11 +109,11 @@ doc_events = {
 	"Journal Entry": {
 		"on_submit": "staff_loans.custom.loan.on_submit",
 	},
-    "Payroll Entry": {
-		"before_submit": "staff_loans.custom.loan.add_additional_salary"
-	},
+    # "Payroll Entry": {
+	# 	"before_submit": "staff_loans.custom.loan.add_additional_salary"
+	# },
     "Additional Salary": {
-		"before_cancel": "staff_loans.custom.loan.do_cancell",
+		"before_cancel": "staff_loans.custom.loan.before_cancel_of_additional_salary",
 	},
     "Salary Slip": {
 		"on_submit": "staff_loans.custom.loan.on_salary_slip_submit",
@@ -164,7 +164,7 @@ doc_events = {
 
 # exempt linked doctypes from being automatically cancelled
 #
-# auto_cancel_exempted_doctypes = ["Auto Repeat"]
+auto_cancel_exempted_doctypes = ["Staff Loan","Staff Loan Repayment Schedule"]
 
 
 # User Data Protection

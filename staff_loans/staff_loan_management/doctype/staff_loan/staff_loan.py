@@ -23,11 +23,6 @@ import os
 import erpnext
 from erpnext.accounts.doctype.journal_entry.journal_entry import get_payment_entry
 from erpnext.controllers.accounts_controller import AccountsController
-from erpnext.loan_management.doctype.loan_repayment.loan_repayment import calculate_amounts
-from erpnext.loan_management.doctype.loan_security_unpledge.loan_security_unpledge import (
-	get_pledged_security_qty,
-)
-
 
 class StaffLoan(AccountsController):
 
@@ -36,15 +31,9 @@ class StaffLoan(AccountsController):
 		
 	def before_save(self):
 		self.recalculate_repayment_schedule()
+		self.check_staff_loan_settings()
 
-		enable_multi_company = frappe.db.get_single_value('Staff Loan Settings', 'enable_multi_company')
-
-		# Check if the "Staff Loan" Salary Component exists
-		if enable_multi_company:
-			company= frappe.db.get_value("Staff Loan Company Setting",{'company':self.company},["company"])
-			if not company:
-				frappe.throw("Please Create a Staff Loan Company Setting or disable Multi Company Support on Staff Loan Settings")
-
+		
 	def recalculate_repayment_schedule(self):
 		total_amount_paid = 0.00
 		for data in self.repayment_schedule:
@@ -56,15 +45,21 @@ class StaffLoan(AccountsController):
 
 		if self.total_payment == self.total_amount_paid and self.status != "Closed":
 			self.status = "Closed"
-
-	def onload(self):
+	
+	def check_staff_loan_settings(self):
 		enable_multi_company = frappe.db.get_single_value('Staff Loan Settings', 'enable_multi_company')
+		
+		if not enable_multi_company:
+			if not frappe.db.get_single_value('Staff Loan Settings', 'credit_account'):
+				frappe.throw("Please complete settings on Staff Loan Settings Doctype")
 
 		# Check if the "Staff Loan" Salary Component exists
-		if not enable_multi_company:
-			staff_loan_settings_component = frappe.db.get_single_value('Staff Loan Settings', 'salary_component')
-			if not staff_loan_settings_component:
-				frappe.throw("Please set Staff Loan Component on Staff Loan Settings")
+		if enable_multi_company:
+			if not frappe.db.exists("Staff Loan Company Setting",{'company':self.company}):
+				frappe.throw("Please Create a Staff Loan Company Setting or disable Multi Company Support on Staff Loan Settings")
+
+	def onload(self):
+		self.check_staff_loan_settings()
 
 	def on_update(self):
 		self.validate_accounts()
@@ -148,7 +143,6 @@ class StaffLoan(AccountsController):
 
 	def on_cancel(self):
 		self.before_cancel_document()
-		self.unlink_loan_security_pledge()
 		self.ignore_linked_doctypes = ["GL Entry", "Payment Ledger Entry"]
 
 	def before_cancel_document(self):
@@ -161,10 +155,11 @@ class StaffLoan(AccountsController):
 				
 		connected_doc = frappe.get_list("Staff Loan Repayment", filters={"loan": self.name},fields={"docstatus","name"})
 
-		for doc in connected_doc:
-			if doc.docstatus == 1:
-				link = get_link_to_form("Staff Loan Repayment", doc.name)
-				frappe.throw(_("You must cancel connected repayment entries {0} before cancelling this document").format(link))
+		if len(connected_doc)> 0:
+			for doc in connected_doc:
+				if doc.docstatus == 1:
+					link = get_link_to_form("Staff Loan Repayment", doc.name)
+					frappe.throw(_("You must cancel connected repayment entries {0} before cancelling this document").format(link))
 
 	# frappe.db.after_cancel("Payment Entry", cancel_linked_journal_entry)
 
@@ -312,38 +307,6 @@ class StaffLoan(AccountsController):
 		if not self.loan_amount:
 			frappe.throw(_("Loan amount is mandatory"))
 
-	def link_loan_security_pledge(self):
-		if self.is_secured_loan and self.loan_application:
-			maximum_loan_value = frappe.db.get_value(
-				"Loan Security Pledge",
-				{"loan_application": self.loan_application, "status": "Requested"},
-				"sum(maximum_loan_value)",
-			)
-
-			if maximum_loan_value:
-				frappe.db.sql(
-					"""
-					UPDATE `tabLoan Security Pledge`
-					SET loan = %s, pledge_time = %s, status = 'Pledged'
-					WHERE status = 'Requested' and loan_application = %s
-				""",
-					(self.name, now_datetime(), self.loan_application),
-				)
-
-				self.db_set("maximum_loan_amount", maximum_loan_value)
-
-	def unlink_loan_security_pledge(self):
-		pledges = frappe.get_all("Loan Security Pledge", fields=["name"], filters={"Loan": self.name})
-		pledge_list = [d.name for d in pledges]
-		if pledge_list:
-			frappe.db.sql(
-				"""UPDATE `tabLoan Security Pledge` SET
-				loan = '', status = 'Unpledged'
-				where name in (%s) """
-				% (", ".join(["%s"] * len(pledge_list))),
-				tuple(pledge_list),
-			)  # nosec
-
 
 def update_total_amount_paid(doc):
 	total_amount_paid = 0
@@ -459,60 +422,9 @@ def get_loan_application(loan_application):
 	if loan:
 		return loan.as_dict()
 
-
-@frappe.whitelist()
-def close_unsecured_term_loan(loan):
-	loan_details = frappe.db.get_value(
-		"Staff Loan", {"name": loan}, ["status", "is_term_loan", "is_secured_loan"], as_dict=1
-	)
-
-	if (
-		loan_details.status == "Loan Closure Requested"
-		and loan_details.is_term_loan
-		and not loan_details.is_secured_loan
-	):
-		frappe.db.set_value("Staff Loan", loan, "status", "Closed")
-	else:
-		frappe.throw(_("Cannot close this loan until full repayment"))
-
-
 def close_loan(loan, total_amount_paid):
 	frappe.db.set_value("Staff Loan", loan, "total_amount_paid", total_amount_paid)
 	frappe.db.set_value("Staff Loan", loan, "status", "Closed")
-
-
-@frappe.whitelist()
-def make_loan_disbursement(loan, company, applicant_type, applicant, pending_amount=0, as_dict=0):
-	disbursement_entry = frappe.new_doc("Loan Disbursement")
-	disbursement_entry.against_loan = loan
-	disbursement_entry.applicant_type = applicant_type
-	disbursement_entry.applicant = applicant
-	disbursement_entry.company = company
-	disbursement_entry.disbursement_date = nowdate()
-	disbursement_entry.posting_date = nowdate()
-
-	disbursement_entry.disbursed_amount = pending_amount
-	if as_dict:
-		return disbursement_entry.as_dict()
-	else:
-		return disbursement_entry
-
-
-@frappe.whitelist()
-def make_repayment_entry(loan, applicant_type, applicant, loan_type, company, as_dict=0):
-	repayment_entry = frappe.new_doc("Loan Repayment")
-	repayment_entry.against_loan = loan
-	repayment_entry.applicant_type = applicant_type
-	repayment_entry.applicant = applicant
-	repayment_entry.company = company
-	repayment_entry.loan_type = loan_type
-	repayment_entry.posting_date = nowdate()
-
-	if as_dict:
-		return repayment_entry.as_dict()
-	else:
-		return repayment_entry
-
 
 @frappe.whitelist()
 def make_loan_write_off(loan, company=None, posting_date=None, amount=0, as_dict=0):
@@ -580,82 +492,12 @@ def make_loan_write_off_by_external_sources_entry(loan, company=None, posting_da
 	else:
 		return write_off_by_external_sources
 
-@frappe.whitelist()
-def unpledge_security(
-	loan=None, loan_security_pledge=None, security_map=None, as_dict=0, save=0, submit=0, approve=0
-):
-	# if no security_map is passed it will be considered as full unpledge
-	if security_map and isinstance(security_map, str):
-		security_map = json.loads(security_map)
-
-	if loan:
-		pledge_qty_map = security_map or get_pledged_security_qty(loan)
-		loan_doc = frappe.get_doc("Staff Loan", loan)
-		unpledge_request = create_loan_security_unpledge(
-			pledge_qty_map, loan_doc.name, loan_doc.company, loan_doc.applicant_type, loan_doc.applicant
-		)
-	# will unpledge qty based on loan security pledge
-	elif loan_security_pledge:
-		security_map = {}
-		pledge_doc = frappe.get_doc("Loan Security Pledge", loan_security_pledge)
-		for security in pledge_doc.securities:
-			security_map.setdefault(security.loan_security, security.qty)
-
-		unpledge_request = create_loan_security_unpledge(
-			security_map,
-			pledge_doc.loan,
-			pledge_doc.company,
-			pledge_doc.applicant_type,
-			pledge_doc.applicant,
-		)
-
-	if save:
-		unpledge_request.save()
-
-	if submit:
-		unpledge_request.submit()
-
-	if approve:
-		if unpledge_request.docstatus == 1:
-			unpledge_request.status = "Approved"
-			unpledge_request.save()
-		else:
-			frappe.throw(_("Only submittted unpledge requests can be approved"))
-
-	if as_dict:
-		return unpledge_request
-	else:
-		return unpledge_request
-
-
-def create_loan_security_unpledge(unpledge_map, loan, company, applicant_type, applicant):
-	unpledge_request = frappe.new_doc("Loan Security Unpledge")
-	unpledge_request.applicant_type = applicant_type
-	unpledge_request.applicant = applicant
-	unpledge_request.loan = loan
-	unpledge_request.company = company
-
-	for security, qty in unpledge_map.items():
-		if qty:
-			unpledge_request.append("securities", {"loan_security": security, "qty": qty})
-
-	return unpledge_request
-
-
-@frappe.whitelist()
-def get_shortfall_applicants():
-	loans = frappe.get_all("Loan Security Shortfall", {"status": "Pending"}, pluck="Staff Loan")
-	applicants = set(frappe.get_all("Staff Loan", {"name": ("in", loans)}, pluck="name"))
-
-	return {"value": len(applicants), "fieldtype": "Int"}
-
 
 def add_single_month(date):
 	if getdate(date) == get_last_day(date):
 		return get_last_day(add_months(date, 1))
 	else:
 		return add_months(date, 1)
-
 
 @frappe.whitelist()
 def make_refund_jv(loan, amount=0, reference_number=None, reference_date=None, submit=0):
