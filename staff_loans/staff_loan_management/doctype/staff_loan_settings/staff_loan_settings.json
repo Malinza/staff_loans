@@ -7,10 +7,14 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "section_break_dcgt",
+  "enable_multi_company",
+  "section_break_xaih",
   "credit_account",
   "salary_component",
   "column_break_8escm",
-  "debit_account"
+  "debit_account",
+  "jv_posting_date_based_on"
  ],
  "fields": [
   {
@@ -39,12 +43,37 @@
    "label": "Debit Account",
    "options": "Account",
    "reqd": 1
+  },
+  {
+   "fieldname": "section_break_xaih",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_multi_company",
+   "fieldtype": "Check",
+   "label": "Enable Multi Company Support"
+  },
+  {
+   "depends_on": "eval: doc.enable_multi_company == 0",
+   "fieldname": "section_break_dcgt",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "End Date of Salary Slip",
+   "fieldname": "jv_posting_date_based_on",
+   "fieldtype": "Select",
+   "label": "Accrual JV Posting Date Based on",
+   "mandatory_depends_on": "eval: doc.enable_multi_company == 0",
+   "options": "Start Date of Salary Slip\nEnd Date of Salary Slip",
+   "read_only_depends_on": "eval: doc.enable_multi_company",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-06-07 10:20:36.677425",
+ "modified": "2024-06-19 11:38:11.562246",
  "modified_by": "Administrator",
  "module": "Staff Loan Management",
  "name": "Staff Loan Settings",

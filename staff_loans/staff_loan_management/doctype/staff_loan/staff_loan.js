@@ -2,28 +2,19 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("Staff Loan", {
-	applicant: function(frm) {
-		if (!["Loan Application", "Loan"].includes(frm.doc.doctype)) {
-			return;
-		}
-
-		if (frm.doc.applicant) {
-			frappe.model.with_doc(frm.doc.applicant_type, frm.doc.applicant, function() {
-				var applicant = frappe.model.get_doc(frm.doc.applicant_type, frm.doc.applicant);
-				frm.set_value("applicant_name",
-					applicant.employee_name || applicant.member_name);
-			});
-		}
-		else {
-			frm.set_value("applicant_name", null);
-		}
-	},
 	setup: function(frm) {
 		frm.make_methods = {
 			'Loan Disbursement': function() { frm.trigger('make_loan_disbursement') },
 			'Loan Write Off': function() { frm.trigger('make_loan_write_off_entry') },
 			'Loan Repayment By External Sources': function() { frm.trigger('make_loan_write_off_by_external_sources_entry') },
 		}
+		frm.set_query("applicant", function () {
+			return {
+				"filters": {
+					"status": "Active"
+				}
+			};
+		});
 	},
 	onload: function (frm) {
 		// Ignore loan security pledge on cancel of loan
@@ -46,18 +37,6 @@ frappe.ui.form.on("Staff Loan", {
 					"company": frm.doc.company
 				}
 			};
-		});
-
-		$.each(["penalty_income_account", "interest_income_account"], function(i, field) {
-			frm.set_query(field, function () {
-				return {
-					"filters": {
-						"company": frm.doc.company,
-						"root_type": "Income",
-						"is_group": 0
-					}
-				};
-			});
 		});
 
 		$.each(["payment_account", "loan_account", "disbursement_account"], function (i, field) {
@@ -104,7 +83,7 @@ frappe.ui.form.on("Staff Loan", {
 				var formattedDaten = [year, month.toString().padStart(2, '0'), day.toString().padStart(2, '0')].join('-');
 
 				frappe.call({
-					method: "staff_loans.Custom.loan.update_additional_salary",
+					method: "staff_loans.custom.loan.update_additional_salary",
 					args: {
 						amount: 0,
 						loan_amount: frm.doc.loan_amount,
@@ -116,10 +95,8 @@ frappe.ui.form.on("Staff Loan", {
 						payment_date: formattedDaten
 					},
 					callback: function(me){
-						// console.log(me.message)
 							if (me.message === "pass"){
 								cur_frm.reload_doc();
-								// frappe.msgprint("Loan Schedule Updated")
 							}
 					}
 				});
@@ -150,7 +127,7 @@ frappe.ui.form.on("Staff Loan", {
 				var formattedDaten = [year, month.toString().padStart(2, '0'), day.toString().padStart(2, '0')].join('-');
 
 				frappe.call({
-					method: "staff_loans.Custom.loan.update_additional_salary",
+					method: "staff_loans.custom.loan.update_additional_salary",
 					args: {
 						amount: data.amount,
 
@@ -229,7 +206,7 @@ frappe.ui.form.on("Staff Loan", {
 				frappe.throw(__("Next Payment Start Date should be greater than deducted date of {0}", [last_payment_date]));
 			}
 			frappe.call({
-				method: "staff_loans.Custom.loan.update_additional_salary",
+				method: "staff_loans.custom.loan.update_additional_salary",
 				args: {
 					amount: last_payment,
 					loan_amount: frm.doc.loan_amount,
@@ -292,7 +269,7 @@ frappe.ui.form.on("Staff Loan", {
 				var formattedDaten = [year, month.toString().padStart(2, '0'), day.toString().padStart(2, '0')].join('-');
 
 				frappe.call({
-					method: "staff_loans.Custom.loan.update_additional_salary",
+					method: "staff_loans.custom.loan.update_additional_salary",
 					args: {
 						amount: data.amount,
 
@@ -316,24 +293,24 @@ frappe.ui.form.on("Staff Loan", {
 	},
 
 	refresh: function (frm) {
-		if (frm.doc.docstatus == 1) {
-		let total = 0;
-		let table_field = frappe.get_doc("Staff Loan", frm.doc.name).repayment_schedule;
+	// 	if (frm.doc.docstatus == 1) {
+	// 	let total = 0;
+	// 	let table_field = frappe.get_doc("Staff Loan", frm.doc.name).repayment_schedule;
 
-		for (let i = 0; i < table_field.length; i++) {
-			if (table_field[i].is_paid) {
-				total += table_field[i].total_payment;
-			}
-		}
-		if (frm.doc.total_amount_paid != total) {
-		frm.set_value("total_amount_paid", total);
-		frm.save("Update");
-	}
-		if (frm.doc.loan_amount === frm.doc.total_amount_paid && frm.doc.status != "Closed") {
-			frm.set_value("status", "Closed");
-			frm.save("Update");
-		}
-	}
+	// 	for (let i = 0; i < table_field.length; i++) {
+	// 		if (table_field[i].is_paid) {
+	// 			total += table_field[i].total_payment;
+	// 		}
+	// 	}
+	// 	if (frm.doc.total_amount_paid != total) {
+	// 	frm.set_value("total_amount_paid", total);
+	// 	frm.save("Update");
+	// }
+	// 	if (frm.doc.loan_amount === frm.doc.total_amount_paid && frm.doc.status != "Closed") {
+	// 		frm.set_value("status", "Closed");
+	// 		frm.save("Update");
+	// 	}
+	// }
 		if (frm.doc.repayment_schedule_type == "Pro-rated calendar months") {
 			frm.set_df_property("repayment_start_date", "label", "Interest Calculation Start Date");
 		}
@@ -388,7 +365,7 @@ frappe.ui.form.on("Staff Loan", {
 				"credit_account": frm.doc.disbursement_account,
 				"as_dict": 1
 			},
-			method: "staff_loans.Custom.loan.make_loan_disbursement_journal_entry",
+			method: "staff_loans.custom.loan.make_loan_disbursement_journal_entry",
 			callback: function(r) {
 				if (r.message) {
 					var doc = frappe.model.sync(r.message)[0];

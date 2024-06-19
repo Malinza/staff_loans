@@ -34,23 +34,25 @@
  ],
  "fields": [
   {
+   "default": "Employee",
    "fieldname": "applicant_type",
-   "fieldtype": "Select",
+   "fieldtype": "Data",
    "label": "Applicant Type",
-   "options": "Employee\nMember\nCustomer",
+   "read_only": 1,
    "reqd": 1
   },
   {
    "fieldname": "applicant",
-   "fieldtype": "Dynamic Link",
+   "fieldtype": "Link",
    "in_global_search": 1,
    "in_standard_filter": 1,
    "label": "Applicant",
-   "options": "applicant_type",
+   "options": "Employee",
    "reqd": 1
   },
   {
    "depends_on": "applicant",
+   "fetch_from": "applicant.employee_name",
    "fieldname": "applicant_name",
    "fieldtype": "Data",
    "in_global_search": 1,
@@ -117,12 +119,14 @@
    "default": "0",
    "fieldname": "is_secured_loan",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Is Secured Loan"
   },
   {
    "fetch_from": "loan_type.rate_of_interest",
    "fieldname": "rate_of_interest",
    "fieldtype": "Percent",
+   "hidden": 1,
    "label": "Rate of Interest",
    "read_only": 1
   },
@@ -184,6 +188,7 @@
    "depends_on": "is_term_loan",
    "fieldname": "total_payable_interest",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Total Payable Interest",
    "options": "Company:company:default_currency",
    "read_only": 1
@@ -201,7 +206,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-02-14 17:40:56.506667",
+ "modified": "2024-06-18 16:46:17.487058",
  "modified_by": "Administrator",
  "module": "Staff Loan Management",
  "name": "Staff Loan Application",

@@ -24,9 +24,42 @@ import erpnext
 from erpnext.accounts.doctype.journal_entry.journal_entry import get_payment_entry
 from erpnext.controllers.accounts_controller import AccountsController
 
-
-
 class StaffLoan(AccountsController):
+	
+	def before_update_after_submit(self):
+		self.recalculate_repayment_schedule()
+		
+	def before_save(self):
+		self.recalculate_repayment_schedule()
+		self.check_staff_loan_settings()
+
+	def recalculate_repayment_schedule(self):
+		total_amount_paid = 0.00
+		for data in self.repayment_schedule:
+			if data.is_paid == 1:
+				total_amount_paid += data.total_payment
+		
+		if self.total_amount_paid != total_amount_paid:
+			self.total_amount_paid = total_amount_paid
+
+		if self.total_payment == self.total_amount_paid and self.status != "Closed":
+			self.status = "Closed"
+
+	def check_staff_loan_settings(self):
+		enable_multi_company = frappe.db.get_single_value('Staff Loan Settings', 'enable_multi_company')
+		
+		if not enable_multi_company:
+			if not frappe.db.get_single_value('Staff Loan Settings', 'credit_account'):
+				frappe.throw("Please complete settings on Staff Loan Settings Doctype")
+
+		# Check if the "Staff Loan" Salary Component exists
+		if enable_multi_company:
+			if not frappe.db.exists("Staff Loan Company Setting",{'company':self.company}):
+				frappe.throw("Please Create a Staff Loan Company Setting or disable Multi Company Support on Staff Loan Settings")
+
+	def onload(self):
+		self.check_staff_loan_settings()
+
 	def on_update(self):
 		self.validate_accounts()
 		self.validate_cost_center()
@@ -35,8 +68,13 @@ class StaffLoan(AccountsController):
 	def after_submit_on_update(self):
 		self.set_status_from_docstatus(self)
 
+	def before_insert(self):
+		self.status = "Sanctioned"
+		self.disbursed_amount = 0.00
+
 	def validate(self):
 		self.validate_loan_application()
+		self.validate_employee_status()
 		self.set_loan_amount()
 		self.validate_loan_amount()
 		self.set_missing_fields()
@@ -59,17 +97,20 @@ class StaffLoan(AccountsController):
 
 	def validate_loan_application(self):
 		if self.loan_application:
-			status = frappe.db.get_value("Loan Application",self.loan_application,"status")
-			docstatus = frappe.db.get_value("Loan Application",self.loan_application,"docstatus")
-			if docstatus != 1 or status != "Approved": 
-				frappe.throw("Please Submit or Approve Loan Application before referencing it")
+			status = frappe.db.get_value("Staff Loan Application",self.loan_application,"status")
+			docstatus = frappe.db.get_value("Staff Loan Application",self.loan_application,"docstatus")
+			if int(docstatus) != 1 or status != "Approved": 
+				frappe.throw(f"Please Submit or Approve Staff Loan Application ({self.loan_application}) before referencing it")
+
+	def validate_employee_status(self):
+		employee_status = frappe.db.get_value("Employee",self.applicant,"status")
+		if employee_status != "Active":
+			frappe.throw(_("Can Only Select an Active Employee."))
 	
 	def validate_accounts(self):
 		for fieldname in [
 			"payment_account",
 			"loan_account",
-			"interest_income_account",
-			"penalty_income_account",
 		]:
 			company = frappe.get_value("Account", self.get(fieldname), "company")
 
@@ -113,10 +154,11 @@ class StaffLoan(AccountsController):
 				
 		connected_doc = frappe.get_list("Staff Loan Repayment", filters={"loan": self.name},fields={"docstatus","name"})
 
-		for doc in connected_doc:
-			if doc.docstatus == 1:
-				link = get_link_to_form("Staff Loan Repayment", doc.name)
-				frappe.throw(_("You must cancel connected repayment entries {0} before cancelling this document").format(link))
+		if len(connected_doc)> 0:
+			for doc in connected_doc:
+				if doc.docstatus == 1:
+					link = get_link_to_form("Staff Loan Repayment", doc.name)
+					frappe.throw(_("You must cancel connected repayment entries {0} before cancelling this document").format(link))
 
 	# frappe.db.after_cancel("Payment Entry", cancel_linked_journal_entry)
 
@@ -376,60 +418,9 @@ def get_loan_application(loan_application):
 	if loan:
 		return loan.as_dict()
 
-
-@frappe.whitelist()
-def close_unsecured_term_loan(loan):
-	loan_details = frappe.db.get_value(
-		"Staff Loan", {"name": loan}, ["status", "is_term_loan", "is_secured_loan"], as_dict=1
-	)
-
-	if (
-		loan_details.status == "Loan Closure Requested"
-		and loan_details.is_term_loan
-		and not loan_details.is_secured_loan
-	):
-		frappe.db.set_value("Staff Loan", loan, "status", "Closed")
-	else:
-		frappe.throw(_("Cannot close this loan until full repayment"))
-
-
 def close_loan(loan, total_amount_paid):
 	frappe.db.set_value("Staff Loan", loan, "total_amount_paid", total_amount_paid)
 	frappe.db.set_value("Staff Loan", loan, "status", "Closed")
-
-
-@frappe.whitelist()
-def make_loan_disbursement(loan, company, applicant_type, applicant, pending_amount=0, as_dict=0):
-	disbursement_entry = frappe.new_doc("Loan Disbursement")
-	disbursement_entry.against_loan = loan
-	disbursement_entry.applicant_type = applicant_type
-	disbursement_entry.applicant = applicant
-	disbursement_entry.company = company
-	disbursement_entry.disbursement_date = nowdate()
-	disbursement_entry.posting_date = nowdate()
-
-	disbursement_entry.disbursed_amount = pending_amount
-	if as_dict:
-		return disbursement_entry.as_dict()
-	else:
-		return disbursement_entry
-
-
-@frappe.whitelist()
-def make_repayment_entry(loan, applicant_type, applicant, loan_type, company, as_dict=0):
-	repayment_entry = frappe.new_doc("Loan Repayment")
-	repayment_entry.against_loan = loan
-	repayment_entry.applicant_type = applicant_type
-	repayment_entry.applicant = applicant
-	repayment_entry.company = company
-	repayment_entry.loan_type = loan_type
-	repayment_entry.posting_date = nowdate()
-
-	if as_dict:
-		return repayment_entry.as_dict()
-	else:
-		return repayment_entry
-
 
 @frappe.whitelist()
 def make_loan_write_off(loan, company=None, posting_date=None, amount=0, as_dict=0):

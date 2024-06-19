@@ -29,9 +29,9 @@ app_license = "MIT"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-doctype_js = {
-	"Loan Application" : "public/js/button.js"
-}
+# doctype_js = {
+# 	"Loan Application" : "public/js/button.js"
+# }
 # doctype_js = {"doctype" : "public/js/doctype.js"}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -107,17 +107,18 @@ doctype_js = {
 
 doc_events = {
 	"Journal Entry": {
-		"on_submit": "staff_loans.Custom.loan.on_submit",
+		"on_submit": "staff_loans.custom.loan.on_submit",
 	},
-    "Payroll Entry": {
-		"before_submit": "staff_loans.Custom.loan.add_additional_salary"
-	},
+    # "Payroll Entry": {
+	# 	"before_submit": "staff_loans.custom.loan.add_additional_salary"
+	# },
     "Additional Salary": {
-		"before_cancel": "staff_loans.Custom.loan.do_cancell",
+		"before_cancel": "staff_loans.custom.loan.before_cancel_of_additional_salary",
 	},
     "Salary Slip": {
-		"on_submit": "staff_loans.Custom.loan.on_salary_slip_submit",
-        "before_save": "staff_loans.Custom.loan.add_additional_salary_on_salary_slip",
+		"on_submit": "staff_loans.custom.loan.on_salary_slip_submit",
+		"on_cancel": "staff_loans.custom.loan.cancel_jv_based_on_salary_slip_cancel",
+        "before_save": "staff_loans.custom.loan.add_additional_salary_on_salary_slip",
 	},
 }
 

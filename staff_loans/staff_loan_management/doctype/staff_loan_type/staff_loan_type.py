@@ -13,8 +13,6 @@ class StaffLoanType(Document):
 		for fieldname in [
 			"payment_account",
 			"loan_account",
-			"interest_income_account",
-			"penalty_income_account",
 		]:
 			company = frappe.get_value("Account", self.get(fieldname), "company")
 
@@ -27,3 +25,11 @@ class StaffLoanType(Document):
 
 		if self.get("loan_account") == self.get("payment_account"):
 			frappe.throw(_("Loan Account and Payment Account cannot be same"))
+
+@frappe.whitelist()
+def get_mode_of_payment_account(company,mode_of_payment):
+	doc = frappe.get_doc("Mode of Payment",mode_of_payment)
+	if len(doc.accounts) > 0:
+		for row in doc.accounts:
+			if row.company == company and row.default_account:
+				return row.default_account

@@ -13,7 +13,8 @@ frappe.ui.form.on('Staff Loan Application', {
 		frm.set_query('loan_type', () => {
 			return {
 				filters: {
-					company: frm.doc.company
+					company: frm.doc.company,
+					disabled: 0
 				}
 			};
 		});
@@ -32,17 +33,11 @@ frappe.ui.form.on('Staff Loan Application', {
 		frm.toggle_reqd("repayment_periods", cint(frm.doc.repayment_method=='Repay Over Number of Periods'))
 	},
 	add_toolbar_buttons: function(frm) {
-		if (frm.doc.status == "Approved") {
-
-			frappe.db.get_value("Staff Loan", {"loan_application": frm.doc.name, "docstatus": 1}, "name", (r) => {
-				if (Object.keys(r).length === 0) {
-						frm.add_custom_button(__('Staff Loan'), function() {
-							frm.trigger('create_loan');
-						},__('Create'))
-				} else {
-					frm.set_df_property('status', 'read_only', 1);
-				}
-			});
+		if (frm.doc.status == "Approved" && frm.doc.docstatus == 1) {
+			
+			frm.add_custom_button(__('Staff Loan'), function() {
+				frm.trigger('create_loan');
+			},__('Create'))
 		}
 	},
 	create_loan: function(frm) {
@@ -51,7 +46,7 @@ frappe.ui.form.on('Staff Loan Application', {
 		}
 
 		frappe.model.open_mapped_doc({
-			method: 'staff_loans.Custom.button_method.create_loans',
+			method: 'staff_loans.custom.button_method.create_loans',
 			frm: frm
 		});
 	},

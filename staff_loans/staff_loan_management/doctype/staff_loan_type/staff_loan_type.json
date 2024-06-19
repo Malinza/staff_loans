@@ -13,21 +13,19 @@
   "penalty_interest_rate",
   "grace_period_in_days",
   "write_off_amount",
+  "description",
   "column_break_2",
   "company",
   "is_term_loan",
   "disabled",
   "repayment_schedule_type",
   "repayment_date_on",
-  "description",
   "account_details_section",
   "mode_of_payment",
   "disbursement_account",
-  "payment_account",
   "column_break_12",
   "loan_account",
-  "interest_income_account",
-  "penalty_income_account",
+  "payment_account",
   "amended_from"
  ],
  "fields": [
@@ -49,6 +47,7 @@
    "default": "0",
    "fieldname": "rate_of_interest",
    "fieldtype": "Percent",
+   "hidden": 1,
    "label": "Rate of Interest (%) Yearly",
    "reqd": 1
   },
@@ -56,12 +55,14 @@
    "description": "Penalty Interest Rate is levied on the pending interest amount on a daily basis in case of delayed repayment ",
    "fieldname": "penalty_interest_rate",
    "fieldtype": "Percent",
+   "hidden": 1,
    "label": "Penalty Interest Rate (%) Per Day"
   },
   {
    "description": "No. of days from due date until which penalty won't be charged in case of delay in loan repayment",
    "fieldname": "grace_period_in_days",
    "fieldtype": "Int",
+   "hidden": 1,
    "label": "Grace Period in Days"
   },
   {
@@ -157,20 +158,6 @@
    "reqd": 1
   },
   {
-   "fieldname": "interest_income_account",
-   "fieldtype": "Link",
-   "label": "Interest Income Account",
-   "options": "Account",
-   "reqd": 1
-  },
-  {
-   "fieldname": "penalty_income_account",
-   "fieldtype": "Link",
-   "label": "Penalty Income Account",
-   "options": "Account",
-   "reqd": 1
-  },
-  {
    "fieldname": "amended_from",
    "fieldtype": "Link",
    "label": "Amended From",
@@ -183,7 +170,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-02-14 15:47:49.971824",
+ "modified": "2024-06-18 16:39:27.499859",
  "modified_by": "Administrator",
  "module": "Staff Loan Management",
  "name": "Staff Loan Type",

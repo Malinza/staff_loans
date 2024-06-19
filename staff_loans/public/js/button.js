@@ -1,6 +1,4 @@
-{% include 'erpnext/loan_management/loan_common.js' %};
-
-frappe.ui.form.on('Loan Application', {
+frappe.ui.form.on('Staff Loan Application', {
 
 	add_toolbar_buttons: function(frm) {
 		if (frm.doc.status == "Approved" && frm.doc.docstatus == 1) {
@@ -17,7 +15,7 @@ frappe.ui.form.on('Loan Application', {
 		}
 
 		frappe.model.open_mapped_doc({
-			method: 'staff_loans.Custom.button_method.create_loans',
+			method: 'staff_loans.custom.button_method.create_loans',
 			frm: frm
 		});
 	}
