@@ -268,6 +268,7 @@ def add_additional_salary(doc, method):
                                 new_additional_salary.employee = i.employee
                                 new_additional_salary.employee_name = i.employee_name
                                 new_additional_salary.company = doc.company
+                                new_additional_salary.overwrite_salary_structure_amount = 0
                                 new_additional_salary.salary_component = staff_loan_salary_component
                                 new_additional_salary.amount = repayment_amount
                                 new_additional_salary.payroll_date = doc.start_date
@@ -319,6 +320,7 @@ def add_additional_salary_on_salary_slip(doc, method):
                             new_additional_salary.salary_component = staff_loan_salary_component
                             new_additional_salary.amount = repayment_amount
                             new_additional_salary.payroll_date = doc.start_date
+                            new_additional_salary.overwrite_salary_structure_amount = 0
                             new_additional_salary.insert()
                             new_additional_salary.submit()
                             d.payment_reference = new_additional_salary.name
@@ -348,23 +350,24 @@ def do_cancel(doc, method):
                     "payroll_date": doc.start_date,
                     "docstatus": 1
                 }, fields={"name"})
-            for add in add_salary:
-                if frappe.db.exists("Staff Loan", {"applicant": i.employee, "status": "Disbursed","docstatus":1}):
-                    staff_loan = frappe.get_list("Staff Loan", filters={
-                            "applicant": i.employee, 
-                            "status": "Disbursed",
-                            "docstatus":1
-                            },fields={"name"})
-                    for loans in staff_loan:
-                        staff_loann = frappe.get_doc("Staff Loan", loans)
-                        for d in staff_loann.repayment_schedule:
-                            if d.payment_reference == add:
-                                d.payment_reference = ""
-                                d.is_paid = 0
-                                d.save()
-                additional_salary = frappe.get_doc("Additional Salary", add)
-                additional_salary.cancel()
-                additional_salary.delete()
+            if len(add_salary) > 0:
+                for add in add_salary:
+                    if frappe.db.exists("Staff Loan", {"applicant": i.employee, "status": "Disbursed","docstatus":1}):
+                        staff_loan = frappe.get_list("Staff Loan", filters={
+                                "applicant": i.employee, 
+                                "status": "Disbursed",
+                                "docstatus":1
+                                },fields={"name"})
+                        for loans in staff_loan:
+                            staff_loann = frappe.get_doc("Staff Loan", loans)
+                            for d in staff_loann.repayment_schedule:
+                                if d.payment_reference == add:
+                                    d.payment_reference = ""
+                                    d.is_paid = 0
+                                    d.save()
+                    additional_salary = frappe.get_doc("Additional Salary", add)
+                    additional_salary.cancel()
+                    additional_salary.delete()
 
 @frappe.whitelist()
 def before_cancel_of_additional_salary(doc, method):
@@ -387,19 +390,20 @@ def before_cancel_of_additional_salary(doc, method):
                 "status": "Disbursed",
                 "docstatus":1
             }, fields=["name"])
-            for staff_loan in staff_loans:
-                # repayment_schedules = frappe.db.get_list("Staff Loan Repayment Schedule", filters={
-                #     "parent": staff_loan.name,
-                #     "payment_reference": doc.name
-                # }, fields=["name"])
-                repayment_schedules = frappe.db.sql(f""" 
-                    SELECT name from `tabStaff Loan Repayment Schedule` where parent = '{staff_loan.name}' and payment_reference = '{doc.name}'
-                """,as_dict=True)
-                for repayment_schedule in repayment_schedules:
-                    repayment_schedule_doc = frappe.get_doc("Staff Loan Repayment Schedule", repayment_schedule.name)
-                    repayment_schedule_doc.payment_reference = ""
-                    repayment_schedule_doc.is_paid = 0
-                    repayment_schedule_doc.save(ignore_permissions=True)
+            if len(staff_loans) > 0:
+                for staff_loan in staff_loans:
+                    # repayment_schedules = frappe.db.get_list("Staff Loan Repayment Schedule", filters={
+                    #     "parent": staff_loan.name,
+                    #     "payment_reference": doc.name
+                    # }, fields=["name"])
+                    repayment_schedules = frappe.db.sql(f""" 
+                        SELECT name from `tabStaff Loan Repayment Schedule` where parent = '{staff_loan.name}' and payment_reference = '{doc.name}'
+                    """,as_dict=True)
+                    for repayment_schedule in repayment_schedules:
+                        repayment_schedule_doc = frappe.get_doc("Staff Loan Repayment Schedule", repayment_schedule.name)
+                        repayment_schedule_doc.payment_reference = ""
+                        repayment_schedule_doc.is_paid = 0
+                        repayment_schedule_doc.save(ignore_permissions=True)
 
 @frappe.whitelist()
 def update_additional_salary(amount,loan,payment_date,loan_amount,input_amount,input_date,type,source):
@@ -551,6 +555,7 @@ def update_additional_salary(amount,loan,payment_date,loan_amount,input_amount,i
                 amendment.docstatus = 0
                 amendment.amended_from = doc.name
                 amendment.amount = flt(amount) 
+                amendment.overwrite_salary_structure_amount = 0
                 amendment.payroll_date = payment_dt.strftime("%Y-%m-%d")
                 amendment.save()
                 amendment.submit()
@@ -618,6 +623,7 @@ def update_additional_salary(amount,loan,payment_date,loan_amount,input_amount,i
                 doc.reload()
                 amendment = frappe.copy_doc(doc)
                 amendment.docstatus = 0
+                amendment.overwrite_salary_structure_amount = 0
                 amendment.amended_from = doc.name
                 amendment.amount = d["total_payment"] 
                 amendment.payroll_date = payment_datee.strftime("%Y-%m-%d")
