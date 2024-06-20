@@ -267,6 +267,7 @@ def add_additional_salary(doc, method):
                             new_additional_salary = frappe.new_doc("Additional Salary")
                             new_additional_salary.employee = i.employee
                             new_additional_salary.employee_name = i.employee_name
+                            new_additional_salary.overwrite_salary_structure_amount = 0
                             new_additional_salary.company = doc.company
                             new_additional_salary.salary_component = staff_loan_salary_component
                             new_additional_salary.amount = repayment_amount
@@ -314,6 +315,7 @@ def add_additional_salary_on_salary_slip(doc, method):
                         # If it doesn't exist, create a new Additional Salary
                         new_additional_salary = frappe.new_doc("Additional Salary")
                         new_additional_salary.employee = doc.employee
+                        new_additional_salary.overwrite_salary_structure_amount = 0
                         new_additional_salary.employee_name = doc.employee_name
                         new_additional_salary.company = doc.company
                         new_additional_salary.salary_component = staff_loan_salary_component
