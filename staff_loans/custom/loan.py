@@ -442,7 +442,7 @@ def update_additional_salary(amount,loan,payment_date,loan_amount,input_amount,i
         monthly_repayment_amount = staff_loan.monthly_repayment_amount
         loan_amount -= flt(input_amount)
         if loan_amount < 0:
-            frappe.throw("Amount can not be greater than "+ str(loan_amounte) + " for the chosen date")
+            frappe.throw("Amount can not be greater than "+ str(loan_amount) + " for the chosen date")
 
 
     if type == "Monthly Deduction Amount":
