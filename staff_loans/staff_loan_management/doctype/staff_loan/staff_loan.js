@@ -18,7 +18,7 @@ frappe.ui.form.on("Staff Loan", {
 	},
 	onload: function (frm) {
 		// Ignore loan security pledge on cancel of loan
-		frm.ignore_doctypes_on_cancel_all = ["Loan Security Pledge"];
+		// frm.ignore_doctypes_on_cancel_all = ["Loan Security Pledge"];
 
 		frm.set_query("loan_application", function () {
 			return {
