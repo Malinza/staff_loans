@@ -129,11 +129,6 @@ class StaffLoan(AccountsController):
 			if not self.cost_center:
 				frappe.throw(_("Cost center is mandatory for loans having rate of interest greater than 0"))
 
-	# def on_submit(self):
-	# 	self.link_loan_security_pledge()
-		# Interest accrual for backdated term loans
-		# self.accrue_loan_interest()
-
 	def after_submit(self):
 		self.set_status_from_docstatus()
 

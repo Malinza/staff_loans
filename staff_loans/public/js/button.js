@@ -1,4 +1,4 @@
-{% include 'erpnext/loan_management/loan_common.js' %};
+// {% include 'erpnext/loan_management/loan_common.js' %};
 
 frappe.ui.form.on('Loan Application', {
 

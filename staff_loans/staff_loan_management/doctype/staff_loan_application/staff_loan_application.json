@@ -23,7 +23,6 @@
   "column_break_7",
   "description",
   "loan_security_details_section",
-  "proposed_pledges",
   "maximum_loan_amount",
   "repayment_info",
   "repayment_method",
@@ -148,13 +147,6 @@
    "label": "Loan Security Details"
   },
   {
-   "depends_on": "eval:doc.is_secured_loan == 1",
-   "fieldname": "proposed_pledges",
-   "fieldtype": "Table",
-   "label": "Proposed Pledges",
-   "options": "Proposed Pledge"
-  },
-  {
    "fieldname": "maximum_loan_amount",
    "fieldtype": "Currency",
    "label": "Maximum Loan Amount",
@@ -221,7 +213,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-06-18 16:42:22.540916",
+ "modified": "2024-11-12 13:12:52.413898",
  "modified_by": "Administrator",
  "module": "Staff Loan Management",
  "name": "Staff Loan Application",
